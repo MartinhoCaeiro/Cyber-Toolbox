@@ -1,0 +1,304 @@
+\documentclass[a4paper]{article}
+% Pacotes necessários
+\usepackage[portuguese]{babel}
+\usepackage[backend=biber, style=apa, citestyle=apa, language=portuguese]{biblatex}
+\usepackage{csquotes}
+\addbibresource{Recursos/referencias.bib}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{setspace}
+\usepackage{siunitx} % Required for alignment
+\sisetup{
+  round-mode          = places, % Rounds numbers
+  round-precision     = 2, % to 2 places
+}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{karnaugh-map}
+\usepackage[section]{placeins}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{titling}
+\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{indentfirst}
+\usepackage{array}
+\usepackage{soul}
+\usepackage{afterpage}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\onehalfspacing
+
+
+% Comando para criar uma página vazia
+\newcommand\myemptypage{
+    \null
+    \thispagestyle{empty}
+    \addtocounter{page}{-1}
+    \newpage
+}
+
+% Página de título principal
+\newcommand{\firsttitlepage}{
+    \begin{titlepage}
+        \centering
+        
+        % Logos superior
+        \begin{figure}[h!]
+            \centering
+            \includegraphics[width=6cm]{Recursos/Logos/LOGO_IPB.png} % Substitua pelo caminho da imagem
+            \vspace{0.5cm}
+        \end{figure}
+
+        % Informações da instituição
+        \large\textbf{INSTITUTO POLITÉCNICO DE BEJA} \\
+        \large\textbf{Escola Superior de Tecnologia e Gestão} \\
+        \large\textbf{Mestrado em Engenharia de Segurança Informática} \\
+        \large\textbf{Linguagens de Programação Dinâmicas} \\
+        
+        \vspace{2cm}
+        
+        % Título do projeto
+        {\Huge \textbf{Aplicação de Segurança Informática}} \\
+        
+        \vspace{1.5cm}
+        
+        % Autores
+        \large Martinho José Novo Caeiro - 23917 \\
+        
+        \vfill
+        
+        % Logo inferior
+        \begin{figure}[h!]
+            \centering
+            \includegraphics[width=6cm]{Recursos/Logos/IPBejaESTIG.jpg} % Substitua pelo caminho da imagem
+        \end{figure}
+        
+        \vspace{1cm}
+        
+        % Local e data
+        {\large Beja, maio de 2025}
+    \end{titlepage}
+}
+
+\newcommand{\secondtitlepage}{
+    \begin{titlepage}
+        \centering
+        \vspace*{1cm}
+        
+        % Informações da instituição
+        \large\textbf{INSTITUTO POLITÉCNICO DE BEJA} \\
+        \large\textbf{Escola Superior de Tecnologia e Gestão} \\
+        \large\textbf{Mestrado em Engenharia de Segurança Informática} \\
+        \large\textbf{Linguagens de Programação Dinâmicas} \\
+        
+        \vspace{2cm}
+        
+        % Título do projeto
+        {\Huge \textbf{Aplicação de Segurança Informática}} \\
+        
+        \vspace{1.5cm}
+        
+        % Autores
+        \large Martinho José Novo Caeiro - 23917 \\
+
+        \vspace{2cm}
+
+        % Orientador
+        \large Orientador: Armando Ventura \\
+        
+        \vfill
+        
+        % Local e data
+        {\large Beja, maio de 2025}
+    \end{titlepage}
+}
+
+\begin{document}
+
+
+\pagenumbering{gobble} % Oculta numeração da página
+
+% Primeira página de título
+\firsttitlepage
+
+\secondtitlepage
+
+
+% Abstract
+\section*{\LARGE\textbf{\textit{Resumo}}}
+
+Este relatório descreve o desenvolvimento de uma aplicação de segurança informática, implementada em Python,
+uma linguagem de programação dinâmica. O objetivo é explorar conceitos fundamentais de segurança
+e demonstrar a aplicação prática desses conceitos. Esta aplicação é desenvolvida no âmbito da unidade curricular
+de Linguagens de Programação Dinâmicas \cite{paglpd}.
+
+\vspace{1cm}
+% Keywords
+\textbf{Keywords:} python, segurança informática, programação dinâmica
+\newpage
+%--------------------------------------------------------------------------------------------------------------------------------------
+
+\section*{\LARGE\textbf{\textit{Abstract}}}
+
+This report describes the development of a cybersecurity application implemented in Python,
+a dynamic programming language. The goal is to explore fundamental security concepts and demonstrate their practical application.
+This application is developed within the scope of the Dynamic Programming Languages course \cite{paglpd}.
+
+\vspace{1cm}
+% Keywords
+\textbf{Keywords:} python, cybersecurity, dynamic programming language
+
+
+\renewcommand{\contentsname}{Índice}       % Título do sumário
+\renewcommand{\listfigurename}{Índice de Figuras} % Título da lista de figuras
+
+% Início do conteúdo do relatório
+\newpage
+\doublespacing
+\tableofcontents
+\listoffigures
+\doublespacing
+
+\newpage
+\pagenumbering{arabic}
+
+\section{Introdução}\label{intro}
+Esta aplicação consistirá na junção de várias ferramentas de segurança informática, tais como Port Scanner, UDP Flooder,
+SYN Flooder, sistema de Logging, sistema de troca de Mensagens, Port Knocker e Password Manager.
+A aplicação será desenvolvida em Python (\cite{python}) e tem como base uma interface de linha de comandos (CLI),
+permitindo ao utilizador interagir com o sistema de forma simples e eficiente.
+O sistema base a ser utilizado será o Kali Linux (\cite{kali}), devido à sua popularidade na área de
+segurança informática e à vasta gama de ferramentas disponíveis.
+Todo o progresso do projeto será documentado no repositório GitHub (\cite{github}).
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\section{Introdução Teórica}\label{theory}
+\subsection{Porto}
+Um porto (\cite{port}) é um ponto de extremidade lógico para comunicação em rede, usado para identificar serviços ou aplicações específicas em um dispositivo.
+Os protocolos que usam principalmente portas são os protocolos da camada de transporte, tais como o Protocolo de controle de transmissão (TCP)
+e User Datagram Protocol (UDP) do conjunto de protocolos da internet.
+
+\subsection{UDP Flood}
+Um ataque UDP flood (\cite{udpflood}) é um tipo de ataque de negação de serviço (DoS) que visa inundar um alvo com pacotes UDP,
+sobrecarregando a largura de banda e os recursos do sistema.
+
+\subsection{SYN Flood}
+Um ataque SYN flood (\cite{synflood}) é um tipo de ataque de negação de serviço (DoS) que explora o processo de handshake do TCP,
+enviando uma série de pacotes SYN para um servidor, mas nunca completando o handshake, o que pode levar à exaustão dos recursos do mesmo.
+
+\subsection{Logging}
+Logging (\cite{logging}) refere-se ao processo de registrar eventos que ocorrem em um sistema de computador.
+Esses registos, conhecidos como logs, são essenciais para a análise de segurança,
+pois permitem que os administradores identifiquem atividades suspeitas e respondam a incidentes de segurança.
+
+\newpage
+\subsection{Port Knocking}
+Port Knocking (\cite{portknocking}) é uma técnica de segurança que envolve o envio de uma sequência de pacotes para portas específicas em um servidor,
+a fim de abrir uma porta de acesso (geralmente SSH) que está fechada por padrão. Essa técnica é usada para ocultar
+serviços de rede e proteger servidores contra ataques automatizados.
+
+\subsection{Password}
+Uma password (ou senha) (\cite{password}) é uma sequência de caracteres usada para autenticar a identidade de um utilizador.
+As passwords são uma das formas mais comuns de autenticação e são usadas para proteger o acesso a sistemas, contas e dados sensíveis.
+
+\subsection{2FA}
+A autenticação de dois fatores (2FA) (\cite{2fa}) é um método de segurança que requer dois tipos diferentes de autenticação para verificar
+a identidade de um utilizador. Normalmente, isso envolve algo que o utilizador sabe (como uma password) e algo que o
+utilizador possui (como um dispositivo móvel para receber um código temporário).
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\section{Configuração do Servidor}\label{obj}
+A instalação do Kali Linux (\cite{kali}), foi feita numa maquina virtual utilizando o VirtualBox (\cite{virtualbox}).
+Para facilitar a instalação foi utilizado um .iso feito especificamente para o VirtualBox, que já tinha o processo de instalação
+automatizado, poupando assim tempo na instalação do sistema operativo.\\
+
+Informações adicionais incluem 4GB de RAM e seis processadores de CPU e a rede está em modo 'bridge'.
+Foi utilizado o Visual Studio Code (\cite{vscode}) como editor de texto para facilitar a edição dos scripts.\\
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{Recursos/Server.png}
+	\caption{Exemplo de Maquina Utilizada}
+	\label{fig:nfswarning}
+\end{figure}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\section{Desenvolvimento dos Scripts}\label{dev}
+Todos os seguintes scripts foram desenvolvidos em Python e todos verificam se a maquina possui os pacotes necessários
+para o funcionamento da ferramenta, irá perguntar se quer instalar para poder continuar a utilizar. Caso
+o utilizador deseje prosseguir, o script irá instalar os pacotes necessários e depois irá ativá-los.
+Cada script pode ser executado individualmente ou através do menu principal.
+
+%---------------------------------------------------------------------------------------------------------------------------
+\subsection{Menu}
+O menu é o metodo principal para a interação com a ferramenta. Para aceder a uma funcionalidade, o utilizador deve selecionar a opção correspondente no menu.
+Para executar o menu apenas é necessário escrever `python menu.py`.\\
+
+O menu apresenta-se da seguinte forma:
+\begin{verbatim}
+    ========== MENU PRINCIPAL - LPD-TOOL ==========
+    1 - Port Scanner
+    2 - UDP Flooder
+    3 - SYN Flooder
+    4 - Logger
+    5 - Messenger
+    6 - Port Knocker
+    7 - Password Manager
+    0 - Sair
+    ===============================================
+    Escolha uma opção: 
+\end{verbatim}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\subsection{Port Scanner}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\subsection{UDP Flooder}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\subsection{SYN Flooder}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\subsection{Logger}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\subsection{Messenger}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\subsection{Port Knocker}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\subsection{Password Manager}
+
+%---------------------------------------------------------------------------------------------------------------------------
+\newpage
+\section{Conclusão}\label{con}
+O desenvolvimento deste laboratório permitiu explorar conceitos fundamentais de segurança informática 
+e linguagens de programação dinâmicas. Apesar de alguns desafios encontrados, foi possível implementar as 
+ferramentas solicitadas e configurar um menu centralizado para facilitar a utilização dos mesmos. 
+Durante este processo, foram revistos conceitos previamente estudados, como o Port Knocking, 
+e foi dada a oportunidade de aprender novos, como UDP Flooding e SYN Flooding.
+%---------------------------------------------------------------------------------------------------------------------------
+
+\newpage
+\renewcommand{\refname}{Bibliografia} % Para artigos
+\renewcommand{\bibname}{Bibliografia} % Para livros e relatórios
+\addcontentsline{toc}{section}{Bibliografia} % Adiciona a Bibliografia ao índice
+\printbibliography
+
+\end{document}
