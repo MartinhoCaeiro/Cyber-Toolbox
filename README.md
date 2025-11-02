@@ -4,8 +4,6 @@ Description
 -----------
 Cyber Toolbox is a collection of cybersecurity utilities implemented in Python. It was developed as a coursework project for the "Dynamic Programming Languages" course. The project gathers several network testing and security utilities behind a simple command-line interface (CLI).
 
-Note: this repository was previously named "LPD-Tool"; it has been renamed to "Cyber Toolbox".
-
 This repository contains:
 - `Relatorio.tex` — the project report (LaTeX) with theoretical background and screenshots.
 - Python scripts — the CLI menu (`menu.py`) and individual tool scripts.
@@ -53,14 +51,6 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-3. Install dependencies:
-- If a `requirements.txt` file exists:
-
-```bash
-pip install -r requirements.txt
-```
-- If not, the scripts are written to check for required packages at runtime and will offer to install missing dependencies automatically.
-
 Running the Application
 -----------------------
 Start the main menu:
@@ -81,8 +71,6 @@ The main menu presents options to run each tool individually:
 7 - Password Manager
 0 - Exit
 
-You can also run individual tool scripts directly (for example, `python port_scanner.py`) depending on how scripts are organized in the repository.
-
 Permissions
 -----------
 Some features interact with low-level network interfaces or craft raw packets; these typically require root privileges. To run with elevated permissions:
@@ -97,7 +85,6 @@ Repository Structure (expected)
 - Recursos/                  — Images, logos, bibliography
 - menu.py                    — CLI entry point
 - scripts/                   — Individual tool scripts (port scanner, flooders, logger, etc.)
-- requirements.txt (optional) — Python dependencies
 
 Best Practices
 --------------
@@ -119,11 +106,6 @@ The full project report with theoretical background and screenshots is in `Relat
 Author
 ------
 Martinho José Novo Caeiro — 23917  
-Repository: MartinhoCaeiro/LPD-Tool
-
-License
--------
-No license file is included in the repository currently. Before using or redistributing the code, confirm the intended license with the author. If you want, a permissive MIT license can be added.
 
 Support / Contact
 -----------------
