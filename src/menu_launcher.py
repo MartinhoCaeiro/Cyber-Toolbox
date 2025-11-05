@@ -6,13 +6,12 @@ Menu launcher simples para gerir/lançar scripts na pasta ./scripts
 
 Uso:
     python3 menu_launcher.py
-Coloca os teus scripts em ./scripts (ex: tcp_scanner.py).
-ATENÇÃO: usa apenas em alvos com autorização explícita.
 """
 
 import os
 import shlex
 import subprocess
+import sys
 from datetime import datetime
 
 SCRIPTS_DIR = "src/scripts"
@@ -54,28 +53,44 @@ def run_script(path, args):
     global last_result
     base = os.path.basename(path)
     if base.endswith(".py"):
-        cmd = ["python3", path] + args
+        # Use the same Python interpreter as the launcher for portability
+        py = sys.executable or "python3"
+        cmd = [py, path] + args
     else:
         cmd = [path] + args
+
+    # If no args are passed, assume the script may be interactive and attach
+    # stdin/stdout/stderr to the terminal so prompts are visible. If args are
+    # present, capture output so we can store the last_result.
+    interactive = len(args) == 0
 
     print(f"\nExecutando: {' '.join(shlex.quote(c) for c in cmd)}\n(CTRL-C para interromper)\n")
     t0 = datetime.now()
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        if interactive:
+            proc = subprocess.run(cmd)
+            stdout = None
+            stderr = None
+        else:
+            proc = subprocess.run(cmd, capture_output=True, text=True)
+            stdout = proc.stdout
+            stderr = proc.stderr
     except KeyboardInterrupt:
         print("\nExecução interrompida pelo utilizador.")
         return
     except Exception as e:
         print(f"Erro a executar: {e}")
         return
-    duration = (datetime.now() - t0).total_seconds()
-    last_result = (path, datetime.now(), proc.stdout, proc.stderr, proc.returncode, duration)
 
-    print("--- STDOUT ---")
-    print(proc.stdout or "(vazio)")
-    if proc.stderr:
-        print("--- STDERR ---")
-        print(proc.stderr)
+    duration = (datetime.now() - t0).total_seconds()
+    last_result = (path, datetime.now(), stdout, stderr, proc.returncode, duration)
+
+    if not interactive:
+        print("--- STDOUT ---")
+        print(stdout or "(vazio)")
+        if stderr:
+            print("--- STDERR ---")
+            print(stderr)
     print(f"--- return code: {proc.returncode}  duração: {duration:.2f}s ---\n")
 
 def save_last_result():
@@ -110,63 +125,125 @@ def main_menu():
     ensure_dirs()
     while True:
         clear_screen()
-        print("="*60)
-        print(" MENU launcher — scripts em ./scripts")
-        print(" ATENÇÃO: usa apenas em alvos com autorização explícita.")
-        print("="*60)
-        print("1) Listar scripts")
-        print("2) Executar script")
-        print("3) Ver último resultado")
-        print("4) Guardar último resultado em ./logs/")
-        print("5) Ver ficheiros em ./logs/")
-        print("6) Sair")
-        print()
-        choice = input("Escolhe opção [1-6]: ").strip()
-        if choice == "1":
-            scripts = list_scripts()
-            print("\nScripts encontrados:")
-            if not scripts:
-                print("  (nenhum). Coloca ficheiros em ./scripts/")
-            else:
-                for i, (fn, p) in enumerate(scripts, start=1):
-                    print(f"  {i}) {fn}")
-            input("\nEnter para voltar ao menu...")
-        elif choice == "2":
-            scripts = list_scripts()
-            if not scripts:
-                print("\nNenhum script em ./scripts/. Coloca um ficheiro e tenta de novo.")
-                input("Enter...")
-                continue
-            print("\nEscolhe um script:")
-            for i, (fn, p) in enumerate(scripts, start=1):
-                print(f"  {i}) {fn}")
-            idx = prompt_index("Número (enter para cancelar): ", len(scripts))
-            if idx is None:
-                continue
-            fn, path = scripts[idx]
-            raw = input("Argumentos (ex: 127.0.0.1 1 1024) — enter = sem argumentos:\n> ").strip()
-            args = shlex.split(raw) if raw else []
-            run_script(path, args)
-            input("Enter para continuar...")
-        elif choice == "3":
-            print()
-            show_last_result()
-            input("\nEnter...")
-        elif choice == "4":
-            save_last_result()
-            input("\nEnter...")
-        elif choice == "5":
-            logs = sorted(os.listdir(LOGS_DIR)) if os.path.isdir(LOGS_DIR) else []
-            print("\nLogs em ./logs/:")
-            if not logs:
-                print("  (nenhum)")
-            else:
-                for fn in logs:
-                    print("  -", fn)
-            input("\nEnter...")
-        elif choice == "6":
+        print("    ======== MENU PRINCIPAL - CYBER-TOOLBOX =========")
+        print("    1 - Port Scanner")
+        print("    2 - UDP Flooder")
+        print("    3 - SYN Flooder")
+        print("    4 - Log Analyzer")
+        print("    5 - Messenger")
+        print("    6 - Port Knocker")
+        print("    7 - Password Manager")
+        print("    0 - Sair")
+        print("    ==================================================")
+        choice = input("    Escolha uma opção: ").strip()
+
+        if choice == "0":
             print("Adeus.")
             break
+
+        menu_map = {
+            "1": ("Port Scanner", "port_scanner.py"),
+            "2": ("UDP Flooder", "udp_flooder.py"),
+            "3": ("SYN Flooder", "syn_flooder.py"),
+            "4": ("Log Analyzer", "log_analyzer.py"),
+            "5": ("Messenger", "messenger.py"),
+            "6": ("Port Knocker", "port_knocker.py"),
+            "7": ("Password Manager", "password_manager.py"),
+        }
+
+        if choice in menu_map:
+            display_name, fname = menu_map[choice]
+            script_path = os.path.join(SCRIPTS_DIR, fname)
+            if not os.path.isfile(script_path):
+                print(f"\nScript '{fname}' não encontrado em {SCRIPTS_DIR}.")
+                print("Coloca o ficheiro correspondente na pasta ./src/scripts/ e tenta de novo.")
+                input("\nEnter para continuar...")
+                continue
+
+            # Special-case the log analyzer so we can collect file arguments and options
+            if fname == "log_analyzer.py":
+                # list available logs
+                log_files = []
+                if os.path.isdir(LOGS_DIR):
+                    for fn in sorted(os.listdir(LOGS_DIR)):
+                        p = os.path.join(LOGS_DIR, fn)
+                        if os.path.isfile(p):
+                            log_files.append(p)
+
+                print(f"\nLançar {display_name} — prepara argumentos")
+                if log_files:
+                    print("Ficheiros disponíveis em src/logs:")
+                    for i, p in enumerate(log_files, start=1):
+                        print(f"  {i}. {os.path.basename(p)}")
+                    s = input("Escolhe ficheiros por número (ex: 1,3) ou escreve caminhos separados por espaço (Enter para cancelar): ").strip()
+                    if not s:
+                        print("Operação cancelada.")
+                        input("Enter para continuar...")
+                        continue
+                    args_files = []
+                    # try parse as indices
+                    if all(ch.isdigit() or ch in ", " for ch in s):
+                        nums = [x.strip() for x in s.split(",") if x.strip()]
+                        for n in nums:
+                            try:
+                                idx = int(n)-1
+                                if 0 <= idx < len(log_files):
+                                    args_files.append(log_files[idx])
+                            except ValueError:
+                                pass
+                    if not args_files:
+                        # treat as paths separated by space
+                        parts = shlex.split(s)
+                        for p in parts:
+                            if os.path.isfile(p):
+                                args_files.append(p)
+                            else:
+                                # try relative to repo root
+                                rp = os.path.join(os.getcwd(), p)
+                                if os.path.isfile(rp):
+                                    args_files.append(rp)
+                    if not args_files:
+                        print("Nenhum ficheiro válido selecionado.")
+                        input("Enter para continuar...")
+                        continue
+                else:
+                    # no logs folder or empty, ask for manual path
+                    s = input("Nenhum ficheiro em src/logs. Escreve caminho para o ficheiro de log (Enter para cancelar): ").strip()
+                    if not s:
+                        print("Operação cancelada.")
+                        input("Enter para continuar...")
+                        continue
+                    if os.path.isfile(s):
+                        args_files = [s]
+                    else:
+                        rp = os.path.join(os.getcwd(), s)
+                        if os.path.isfile(rp):
+                            args_files = [rp]
+                        else:
+                            print("Ficheiro não encontrado.")
+                            input("Enter para continuar...")
+                            continue
+
+                outdir = input("Diretório de saída (default: reports): ").strip() or "reports"
+                # propose default geoip DB if exists
+                default_geo = os.path.join("src", "data", "GeoLite2-City.mmdb")
+                if os.path.isfile(default_geo):
+                    geo_suggest = default_geo
+                else:
+                    geo_suggest = ""
+                geo = input(f"Caminho para GeoIP DB (opcional) [default: {geo_suggest}]: ").strip() or geo_suggest
+
+                args = []
+                args.extend(args_files)
+                args.extend(["-o", outdir])
+                if geo:
+                    args.extend(["--geoip-db", geo])
+
+                run_script(script_path, args)
+                input("\nEnter para continuar...")
+            else:
+                run_script(script_path, [])
+                input("\nEnter para continuar...")
         else:
             print("Escolha inválida. Tenta outra vez.")
             input("Enter...")
