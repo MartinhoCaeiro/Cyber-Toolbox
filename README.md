@@ -110,3 +110,7 @@ Martinho José Novo Caeiro — 23917
 Support / Contact
 -----------------
 Open an issue on GitHub for questions, feature requests, or bug reports, or consult the project report for author contact details.
+
+License
+-------
+This repository is licensed under the GNU General Public License v3.0 (GPL-3.0).
