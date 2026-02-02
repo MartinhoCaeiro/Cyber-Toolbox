@@ -81,7 +81,7 @@
         \vspace{1cm}
         
         % Local e data
-        {\large Beja, maio de 2025}
+        {\large Beja, fevereiro de 2026}
     \end{titlepage}
 }
 
@@ -114,7 +114,7 @@
         \vfill
         
         % Local e data
-        {\large Beja, maio de 2025}
+        {\large Beja, fevereiro de 2026}
     \end{titlepage}
 }
 
@@ -248,7 +248,7 @@ O menu apresenta-se da seguinte forma:
     1 - Port Scanner
     2 - UDP Flooder
     3 - SYN Flooder
-    4 - Logger
+    4 - Log Analyzer
     5 - Messenger
     6 - Port Knocker
     7 - Password Manager
@@ -261,29 +261,43 @@ O menu apresenta-se da seguinte forma:
 \newpage
 \subsection{Port Scanner}
 
+O Port Scanner permite identificar portas TCP abertas em um ou mais alvos. O utilizador indica uma lista de alvos separada por vírgulas e um intervalo de portas (inicial e final). O script resolve cada hostname para IP, testa a conectividade porta a porta com timeout configurável e apresenta os serviços conhecidos quando possível. No final, gera um relatório por alvo com as portas abertas e o tempo total do varrimento. Opcionalmente, pode guardar um relatório em JSON com resultados e métricas, o que facilita a análise posterior.
+
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{UDP Flooder}
+
+O UDP Flooder executa um teste de negação de serviço via UDP. O utilizador define o alvo, a porta, a duração, o tamanho do pacote e o número de threads. O script envia pacotes UDP aleatórios de forma concorrente e apresenta estatísticas como total de pacotes enviados e taxa média (pps). Inclui validações de parâmetros e um aviso de segurança com confirmação explícita, reforçando o uso exclusivamente em ambientes autorizados.
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{SYN Flooder}
 
+O SYN Flooder simula um ataque DoS baseado em TCP SYN, recorrendo à biblioteca Scapy para criação de pacotes raw. O utilizador indica alvo, porta, duração e threads. Cada thread gera pacotes SYN com IP e porto de origem aleatórios, enviando-os sem completar o handshake. O script mostra progresso e, no fim, apresenta um relatório com número de pacotes e taxa de envio. Requer privilégios de administrador e apresenta um aviso legal antes da execução.
+
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
-\subsection{Logger}
+\subsection{Log Analyzer}
+
+O Log Analyzer analisa ficheiros de logs de servidores web (Apache/Nginx), autenticação SSH e firewall UFW. Utiliza expressões regulares para extrair IP, data/hora, serviço, ação e detalhes relevantes. Quando disponível, integra uma base GeoLite2 para resolver o país de origem dos endereços IP. Para cada ficheiro de entrada, gera relatórios em JSON e CSV e apresenta um resumo com contagens por serviço e top de países. Esta ferramenta é útil para identificar padrões de acesso e eventos suspeitos.
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{Messenger}
 
+O Messenger implementa um mensageiro simples com servidor e cliente via TCP. O servidor gera um par de chaves RSA e guarda as mensagens no servidor, cifradas através de um esquema híbrido: o conteúdo é protegido com Fernet (simétrico) e a chave Fernet é cifrada com a chave pública RSA. O cliente comunica com o servidor através de comandos em JSON para enviar, listar, descarregar e apagar mensagens, garantindo que apenas participantes podem aceder ao conteúdo. Inclui ainda criação de backups cifrados (simétricos com palavra‑passe ou assimétricos com RSA), reforçando boas práticas de proteção de dados.
+
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{Port Knocker}
 
+O Port Knocker envia uma sequência de pacotes UDP para um conjunto de portas específicas, simulando a técnica de port knocking. O utilizador fornece o endereço do servidor e a lista de portas. O script envia um knock por porta com um pequeno atraso entre envios e confirma cada envio. Esta abordagem pode ser usada para abrir serviços ocultos (por exemplo, SSH) apenas após a sequência correta.
+
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{Password Manager}
+
+O Password Manager é um gestor de palavras‑passe com cifragem híbrida (RSA + Fernet) e autenticação de dois fatores via TOTP. O utilizador inicializa o sistema, gerando chaves RSA e um segredo TOTP. Os registos (URL, utilizador e palavra‑passe) são cifrados e guardados numa base local. As operações de listar, ver, atualizar e apagar exigem um código OTP válido, mitigando acessos não autorizados. O script inclui modo não‑interativo e menu interativo, proporcionando flexibilidade de utilização.
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage

@@ -1,6 +1,6 @@
-PWD c:\Users\Marti\Documents\LPD-Tool\LaTeX Report
+PWD c:\Users\Marti\Documents\Cyber-Toolbox\LaTeX Report
 INPUT C:\Users\Marti\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT c:\Users\Marti\Documents\LPD-Tool\LaTeX Report\Relatorio.tex
+INPUT c:\Users\Marti\Documents\Cyber-Toolbox\LaTeX Report\Relatorio.tex
 OUTPUT Relatorio.log
 INPUT C:\Users\Marti\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls
 INPUT C:\Users\Marti\AppData\Local\Programs\MiKTeX\tex\latex\base\article.cls

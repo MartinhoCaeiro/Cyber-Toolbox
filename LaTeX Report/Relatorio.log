@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.7)  29 OCT 2025 23:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.7)  2 FEB 2026 14:18
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/Marti/Documents/LPD-Tool/LaTeX Report/Relatorio.tex"
-(c:/Users/Marti/Documents/LPD-Tool/LaTeX Report/Relatorio.tex
+**"c:/Users/Marti/Documents/Cyber-Toolbox/LaTeX Report/Relatorio.tex"
+(c:/Users/Marti/Documents/Cyber-Toolbox/LaTeX Report/Relatorio.tex
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-10-09>
 (C:\Users\Marti\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
@@ -1084,7 +1084,7 @@ File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 [12]
 
 [13]
-Overfull \hbox (7.78456pt too wide) in paragraph at lines 303--303
+Overfull \hbox (7.78456pt too wide) in paragraph at lines 317--317
 [][]\T1/cmr/m/n/10 Python Soft-ware Foun-da-tion. (2025). \T1/cmr/m/it/10 Wel-come to Python.org \T1/cmr/m/n/10 [Lin-gua-gem de Pro-gra-ma-ção Python].
  []
 
@@ -1096,23 +1096,23 @@ LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-10-09>
  ***********
 Package rerunfilecheck Info: File `Relatorio.out' has not changed.
-(rerunfilecheck)             Checksum: D4AE3210FFC2848DA26391FC4CBF9DAE;2363.
+(rerunfilecheck)             Checksum: 12E76E903940D0FE40EB7E1443F3F10E;2396.
 Package logreq Info: Writing requests to 'Relatorio.run.xml'.
 \openout1 = `Relatorio.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
  36640 strings out of 473897
- 736895 string characters out of 5726462
- 1598681 words of memory out of 5000000
+ 736955 string characters out of 5726462
+ 1599691 words of memory out of 5000000
  58958 multiletter control sequences out of 15000+600000
  568412 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,6n,107p,747b,2805s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,6n,107p,752b,2805s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1000.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1000.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1440.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbi1728.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2488.pk> <C:\Users\Marti\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1200.pk>
-Output written on Relatorio.pdf (19 pages, 299433 bytes).
+Output written on Relatorio.pdf (19 pages, 306631 bytes).
 PDF statistics:
- 673 PDF objects out of 1000 (max. 8388607)
+ 684 PDF objects out of 1000 (max. 8388607)
  57 named destinations out of 1000 (max. 500000)
  196 words of extra memory for PDF output out of 10000 (max. 10000000)
 
