@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mestrado de Engenharia em Segurança Informatica
-Linguagens de Programação Dinamicas - Port Scanner
+Master's in Computer Security Engineering
+Dynamic Programming Languages - Port Scanner
 
-Martinho Caeiro (23917)
+Author: Martinho Caeiro (23917)
 
-Este script varre portas em múltiplos alvos para identificar quais estão abertas.
+Description:
+    Scans ports on multiple targets to identify which are open.
 
-Uso:
-    python3 port_scanner.py <alvo1,alvo2,...> <porta_inicial> <porta_final>
+Usage:
+    python3 port_scanner.py <target1,target2,...> <start_port> <end_port>
 
-Exemplo:
-    python3 port_scanner.py alvo1.com,alvo2.com,127.0.0.1 1 1024
+Example:
+    python3 port_scanner.py target1.com,target2.com,127.0.0.1 1 1024
 """
 
 import socket
@@ -21,13 +22,13 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 
-# =====================
-# Port Scanner Functions
+
+
+# Section: Scanner
 
 def scan_host(host, start_port, end_port, timeout=2):
-    """Varre portas num host específico."""
+    """Scan ports on a specific host."""
     try:
-        # Resolve hostname para IP
         ip = socket.gethostbyname(host)
     except socket.gaierror:
         print(f"Hostname '{host}' não pode ser resolvido")
@@ -47,7 +48,7 @@ def scan_host(host, start_port, end_port, timeout=2):
                 try:
                     service = socket.getservbyport(port)
                 except OSError:
-                    service = "unknown"
+                    service = "desconhecido"
                 print(f"Porta {port:<6} aberta ({service})")
                 open_ports.append(port)
             sock.close()
@@ -56,6 +57,9 @@ def scan_host(host, start_port, end_port, timeout=2):
 
     return ip, open_ports
 
+
+
+# Section: CLI
 
 def main():
     parser = argparse.ArgumentParser(
@@ -70,7 +74,6 @@ def main():
 
     args = parser.parse_args()
 
-    # Se não foram fornecidos argumentos via CLI, fazer prompt interativo
     if not args.targets:
         targets_input = input("\nAlvos (ex: host1.com,host2.com,127.0.0.1): ").strip()
         if not targets_input:
@@ -94,7 +97,7 @@ def main():
             except ValueError:
                 print("Por favor, introduza um número válido.")
 
-    # Validação
+    # Validation
     if args.start_port < 1 or args.start_port > 65535:
         print(f"Porta inicial deve estar entre 1 e 65535")
         sys.exit(1)
@@ -105,11 +108,11 @@ def main():
         print(f"Porta inicial não pode ser maior que porta final")
         sys.exit(1)
 
-    # Parse targets (pode ser lista separada por vírgula)
+    # Parse targets (comma-separated list)
     targets = [t.strip() for t in args.targets.split(",")]
 
     print("=" * 60)
-    print("CYBER-TOOLBOX - PORT SCANNER")
+    print("CYBER-TOOLBOX - VARREDOR DE PORTAS")
     print("=" * 60)
 
     t_start = datetime.now()
@@ -123,7 +126,7 @@ def main():
     except KeyboardInterrupt:
         print("\n\nVarrimento interrompido pelo utilizador.")
 
-    # Relatório final
+    # Final report
     print("\n" + "=" * 60)
     print("RELATÓRIO FINAL")
     print("=" * 60)
@@ -135,11 +138,11 @@ def main():
         else:
             print(f"   Nenhuma porta aberta (intervalo: {args.start_port}-{args.end_port})")
 
-    # Tempo total
+    # Total time
     duration = (datetime.now() - t_start).total_seconds()
-    print(f"\n⏱️ Varrimento concluído em {duration:.2f}s")
+    print(f"\n Varrimento concluído em {duration:.2f}s")
 
-    # Guardar em ficheiro se solicitado
+    # Save to file if requested
     if args.output:
         try:
             import json

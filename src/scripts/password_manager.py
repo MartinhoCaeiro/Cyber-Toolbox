@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Simple password manager
+Master's in Computer Security Engineering
+Dynamic Programming Languages - Password Manager
 
-Stores records with fields: url, user, pass
-Each record is encrypted using a randomly generated symmetric key (Fernet).
-The symmetric key is encrypted with an RSA public key (asymmetric keys).
+Author: Martinho Caeiro (23917)
 
-Accessing/decrypting records requires a TOTP code (2FA) using `pyotp`.
+Description:
+    Simple password manager with RSA + Fernet encryption and TOTP 2FA.
 
 Usage:
     python3 password_manager.py --init
@@ -16,13 +16,17 @@ Usage:
     python3 password_manager.py --update <id> [--url ..] [--user ..] [--pass ..] --otp 123456
     python3 password_manager.py --delete <id> --otp 123456
 
-Files created (in the same folder):
-  - private_key.pem  (PEM, kept secret)
-  - public_key.pem   (PEM)
-  - totp_secret.txt  (base32 secret for TOTP)
-  - records.json     (encrypted records database)
+Example:
+    python3 password_manager.py --list --otp 123456
 
-Note: This is a simple educational implementation. Do not use for production secrets.
+Files created (in the same folder):
+    - private_key.pem  (PEM, kept secret)
+    - public_key.pem   (PEM)
+    - totp_secret.txt  (base32 secret for TOTP)
+    - records.json     (encrypted records database)
+
+Note:
+    This is a simple educational implementation. Do not use for production secrets.
 """
 
 import argparse
@@ -52,35 +56,42 @@ def _ensure_package_local(package_name, import_name=None, prompt=True):
         return None
 
     try:
-        ans = input(f"Dependency '{package_name}' is missing. Install now? [Y/n]: ").strip().lower()
+        ans = input(f"Dependência '{package_name}' em falta. Instalar agora? [s/N]: ").strip().lower()
     except Exception:
         return None
 
-    if ans not in ("", "y", "yes"):
+    if ans not in ("", "s", "sim", "y", "yes"):
         return None
 
     cmd = [_sys.executable, "-m", "pip", "install", package_name]
-    print(f"Running: {' '.join(cmd)}")
+    print(f"A executar: {' '.join(cmd)}")
     try:
         res = subprocess.run(cmd)
     except Exception as e:
-        print(f"Failed to run pip: {e}")
+        print(f"Falha ao executar o pip: {e}")
         return None
 
     if res.returncode != 0:
-        print(f"pip install exited with code {res.returncode}")
+        print(f"pip install terminou com o código {res.returncode}")
         return None
 
     try:
         return importlib.import_module(mod_name)
     except Exception as e:
-        print(f"Installed but failed to import {mod_name}: {e}")
+        print(f"Instalado, mas falhou ao importar {mod_name}: {e}")
         return None
 
+
+
+# Section: Dependencies
 
 # Prompt/install commonly-used packages used in this script
 _ensure_package_local("cryptography")
 _ensure_package_local("pyotp")
+
+
+
+# Section: Paths
 
 BASE_DIR = os.path.dirname(__file__)
 KEY_PRIVATE = os.path.join(BASE_DIR, "private_key.pem")
@@ -88,6 +99,9 @@ KEY_PUBLIC = os.path.join(BASE_DIR, "public_key.pem")
 TOTP_FILE = os.path.join(BASE_DIR, "totp_secret.txt")
 DB_FILE = os.path.join(BASE_DIR, "records.json")
 
+
+
+# Section: Key management
 
 def ensure_files_dir():
     # Ensure script directory exists as working dir
@@ -101,7 +115,7 @@ def init_keys_and_totp():
         from cryptography.hazmat.primitives.asymmetric import rsa
         from cryptography.hazmat.backends import default_backend
     except Exception as e:
-        print("Missing cryptography package. Install with: pip install cryptography")
+        print("Pacote cryptography em falta. Instale com: pip install cryptography")
         raise
 
     # Generate RSA private key
@@ -126,7 +140,7 @@ def init_keys_and_totp():
     try:
         import pyotp
     except Exception:
-        print("Missing pyotp package. Install with: pip install pyotp")
+        print("Pacote pyotp em falta. Instale com: pip install pyotp")
         raise
 
     secret = pyotp.random_base32()
@@ -138,11 +152,11 @@ def init_keys_and_totp():
         with open(DB_FILE, "w") as f:
             json.dump([], f)
 
-    print("Initialized keys and TOTP secret.")
-    print(f"Public key: {KEY_PUBLIC}")
-    print(f"Private key: {KEY_PRIVATE} (keep secret!)")
-    print(f"TOTP secret written to: {TOTP_FILE}")
-    print("Add the TOTP secret to your authenticator app (base32 secret). You can also use the provisioning URI below:")
+    print("Chaves e segredo TOTP inicializados.")
+    print(f"Chave pública: {KEY_PUBLIC}")
+    print(f"Chave privada: {KEY_PRIVATE} (mantenha em segredo!)")
+    print(f"Segredo TOTP guardado em: {TOTP_FILE}")
+    print("Adicione o segredo TOTP à sua app autenticadora (segredo base32). Também pode usar o URI de provisionamento abaixo:")
     try:
         import pyotp
         totp = pyotp.TOTP(secret)
@@ -157,7 +171,7 @@ def load_public_key():
     from cryptography.hazmat.backends import default_backend
 
     if not os.path.exists(KEY_PUBLIC):
-        raise FileNotFoundError("Public key not found. Run --init first.")
+        raise FileNotFoundError("Chave pública não encontrada. Execute --init primeiro.")
     with open(KEY_PUBLIC, "rb") as f:
         data = f.read()
     return serialization.load_pem_public_key(data, backend=default_backend())
@@ -168,7 +182,7 @@ def load_private_key():
     from cryptography.hazmat.backends import default_backend
 
     if not os.path.exists(KEY_PRIVATE):
-        raise FileNotFoundError("Private key not found. Run --init first.")
+        raise FileNotFoundError("Chave privada não encontrada. Execute --init primeiro.")
     with open(KEY_PRIVATE, "rb") as f:
         data = f.read()
     return serialization.load_pem_private_key(data, password=None, backend=default_backend())
@@ -229,7 +243,7 @@ def decrypt_record(enc_cipher_b64, enc_key_b64):
 def require_otp(code):
     import pyotp
     if not os.path.exists(TOTP_FILE):
-        print("TOTP not initialized. Run --init first.")
+        print("TOTP não inicializado. Execute --init primeiro.")
         return False
     with open(TOTP_FILE, "r") as f:
         secret = f.read().strip()
@@ -240,13 +254,16 @@ def require_otp(code):
         return False
 
 
+
+# Section: Commands
+
 def cmd_create(args):
     url = args.url
     user = args.user
     passwd = args.passwd
 
     if not (url and user and passwd):
-        print("Missing fields. Provide --url, --user and --pass.")
+        print("Campos em falta. Indique --url, --user e --pass.")
         return
 
     payload = json.dumps({"url": url, "user": user, "pass": passwd}, ensure_ascii=False).encode("utf-8")
@@ -261,37 +278,37 @@ def cmd_create(args):
     recs = load_records()
     recs.append(rec)
     save_records(recs)
-    print(f"Record created with id: {rec['id']}")
+    print(f"Registo criado com id: {rec['id']}")
 
 
 def cmd_list(args):
     if not args.otp:
-        print("Listing requires an OTP code (--otp <code>).")
+        print("A listagem requer um código OTP (--otp <código>).")
         return
     if not require_otp(args.otp):
-        print("Invalid OTP code.")
+        print("Código OTP inválido.")
         return
 
     recs = load_records()
     if not recs:
-        print("No records.")
+        print("Sem registos.")
         return
-    print(f"{len(recs)} records:")
+    print(f"{len(recs)} registos:")
     for r in recs:
         try:
             plain = decrypt_record(r["cipher"], r["enc_key"])
             data = json.loads(plain.decode("utf-8"))
             print(f"- id: {r['id']} | url: {data.get('url')} | user: {data.get('user')}")
         except Exception as e:
-            print(f"- id: {r['id']} | <decryption error: {e}>")
+                print(f"- id: {r['id']} | <erro de desencriptação: {e}>")
 
 
 def cmd_view(args):
     if not args.id or not args.otp:
-        print("Usage: --view <id> --otp <code>")
+        print("Uso: --view <id> --otp <código>")
         return
     if not require_otp(args.otp):
-        print("Invalid OTP code.")
+        print("Código OTP inválido.")
         return
     recs = load_records()
     for r in recs:
@@ -302,33 +319,33 @@ def cmd_view(args):
                 print(json.dumps(data, indent=2, ensure_ascii=False))
                 return
             except Exception as e:
-                print(f"Decryption error: {e}")
+                print(f"Erro de desencriptação: {e}")
                 return
-    print("Record not found.")
+    print("Registo não encontrado.")
 
 
 def cmd_delete(args):
     if not args.id or not args.otp:
-        print("Usage: --delete <id> --otp <code>")
+        print("Uso: --delete <id> --otp <código>")
         return
     if not require_otp(args.otp):
-        print("Invalid OTP code.")
+        print("Código OTP inválido.")
         return
     recs = load_records()
     new = [r for r in recs if r["id"] != args.id]
     if len(new) == len(recs):
-        print("Record not found.")
+        print("Registo não encontrado.")
         return
     save_records(new)
-    print("Record deleted.")
+    print("Registo apagado.")
 
 
 def cmd_update(args):
     if not args.id or not args.otp:
-        print("Usage: --update <id> --otp <code> [--url ..] [--user ..] [--pass ..]")
+        print("Uso: --update <id> --otp <código> [--url ..] [--user ..] [--pass ..]")
         return
     if not require_otp(args.otp):
-        print("Invalid OTP code.")
+        print("Código OTP inválido.")
         return
     recs = load_records()
     for i, r in enumerate(recs):
@@ -337,7 +354,7 @@ def cmd_update(args):
                 plain = decrypt_record(r["cipher"], r["enc_key"])
                 data = json.loads(plain.decode("utf-8"))
             except Exception as e:
-                print(f"Decryption error: {e}")
+                print(f"Erro de desencriptação: {e}")
                 return
             if args.url:
                 data["url"] = args.url
@@ -351,26 +368,29 @@ def cmd_update(args):
             recs[i]["cipher"] = cipher_b64
             recs[i]["enc_key"] = enc_key_b64
             save_records(recs)
-            print("Record updated.")
+            print("Registo atualizado.")
             return
-    print("Record not found.")
+    print("Registo não encontrado.")
 
+
+
+# Section: CLI
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Simple password manager with RSA+Fernet + TOTP 2FA")
-    p.add_argument("--init", action="store_true", help="Initialize keys, totp and database")
+    p = argparse.ArgumentParser(description="Gestor de palavras-passe simples com RSA+Fernet + TOTP 2FA")
+    p.add_argument("--init", action="store_true", help="Inicializar chaves, TOTP e base de dados")
     sub = p.add_argument_group("operations")
-    sub.add_argument("--create", action="store_true", help="Create a record (non-interactive with --url/--user/--pass)")
-    sub.add_argument("--list", action="store_true", help="List records (requires --otp)")
-    sub.add_argument("--view", action="store_true", help="View a record (--id and --otp required)")
-    sub.add_argument("--delete", action="store_true", help="Delete a record (--id and --otp required)")
-    sub.add_argument("--update", action="store_true", help="Update a record (--id and --otp required)")
+    sub.add_argument("--create", action="store_true", help="Criar um registo (não interativo com --url/--user/--pass)")
+    sub.add_argument("--list", action="store_true", help="Listar registos (requer --otp)")
+    sub.add_argument("--view", action="store_true", help="Ver um registo (--id e --otp obrigatórios)")
+    sub.add_argument("--delete", action="store_true", help="Apagar um registo (--id e --otp obrigatórios)")
+    sub.add_argument("--update", action="store_true", help="Atualizar um registo (--id e --otp obrigatórios)")
 
-    p.add_argument("--id", help="Record id for view/update/delete")
-    p.add_argument("--url", help="URL for create/update")
-    p.add_argument("--user", help="User for create/update")
-    p.add_argument("--pass", dest="passwd", help="Password for create/update")
-    p.add_argument("--otp", help="TOTP code for operations that require 2FA")
+    p.add_argument("--id", help="ID do registo para ver/atualizar/apagar")
+    p.add_argument("--url", help="URL para criar/atualizar")
+    p.add_argument("--user", help="Utilizador para criar/atualizar")
+    p.add_argument("--pass", dest="passwd", help="Palavra-passe para criar/atualizar")
+    p.add_argument("--otp", help="Código TOTP para operações que requerem 2FA")
 
     return p.parse_args()
 
@@ -402,15 +422,15 @@ def main():
 
 
 def run_interactive_menu():
-    print("Password Manager — interactive mode")
-    print("Note: viewing/deleting/updating records requires OTP 2FA.")
+    print("Gestor de Palavras-passe — modo interativo")
+    print("Nota: ver/apagar/atualizar registos requer OTP 2FA.")
     while True:
-        print("\nOptions:\n 1) Create\n 2) List (requires OTP)\n 3) View (requires OTP)\n 4) Update (requires OTP)\n 5) Delete (requires OTP)\n 6) Exit")
-        choice = input("Choice: ").strip()
+        print("\nOpções:\n 1) Criar\n 2) Listar (requer OTP)\n 3) Ver (requer OTP)\n 4) Atualizar (requer OTP)\n 5) Apagar (requer OTP)\n 6) Sair")
+        choice = input("Escolha: ").strip()
         if choice == "1":
             url = input("URL: ").strip()
-            user = input("User: ").strip()
-            passwd = input("Password: ").strip()
+            user = input("Utilizador: ").strip()
+            passwd = input("Palavra-passe: ").strip()
             class A:
                 pass
             a = A()
@@ -422,36 +442,36 @@ def run_interactive_menu():
             a = A(); a.otp = otp
             cmd_list(a)
         elif choice == "3":
-            rid = input("Record id: ").strip()
+            rid = input("ID do registo: ").strip()
             otp = input("OTP: ").strip()
             class A: pass
             a = A(); a.id = rid; a.otp = otp
             cmd_view(a)
         elif choice == "4":
-            rid = input("Record id: ").strip()
+            rid = input("ID do registo: ").strip()
             otp = input("OTP: ").strip()
-            url = input("New URL (enter to skip): ").strip() or None
-            user = input("New User (enter to skip): ").strip() or None
-            passwd = input("New Pass (enter to skip): ").strip() or None
+            url = input("Novo URL (Enter para ignorar): ").strip() or None
+            user = input("Novo utilizador (Enter para ignorar): ").strip() or None
+            passwd = input("Nova palavra-passe (Enter para ignorar): ").strip() or None
             class A: pass
             a = A(); a.id = rid; a.otp = otp; a.url = url; a.user = user; a.passwd = passwd
             cmd_update(a)
         elif choice == "5":
-            rid = input("Record id: ").strip()
+            rid = input("ID do registo: ").strip()
             otp = input("OTP: ").strip()
             class A: pass
             a = A(); a.id = rid; a.otp = otp
             cmd_delete(a)
         elif choice == "6":
-            print("Bye")
+            print("Adeus")
             return
         else:
-            print("Invalid choice")
+            print("Opção inválida")
 
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print("Error:", e)
+        print("Erro:", e)
         sys.exit(1)

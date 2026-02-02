@@ -1,13 +1,24 @@
 #!/usr/bin/env python3
-"""Log analyzer for Apache/Nginx access logs and OpenSSH auth logs.
+"""
+Master's in Computer Security Engineering
+Dynamic Programming Languages - Log Analyzer
+
+Author: Martinho Caeiro (23917)
+
+Description:
+    Analyze Apache/Nginx access logs and OpenSSH auth logs.
 
 Features:
-- Parse Apache/Nginx combined log lines and OpenSSH auth.log lines
-- Extract IP, timestamp, service, status (success/fail), and details
-- Optionally resolve country via GeoLite2 DB (pass --geoip-db)
-- Emit JSON and CSV reports grouped per event
+    - Parse Apache/Nginx combined log lines and OpenSSH auth.log lines.
+    - Extract IP, timestamp, service, status (success/fail), and details.
+    - Optionally resolve country via GeoLite2 DB (pass --geoip-db).
+    - Emit JSON and CSV reports grouped per event.
 
-Usage: python log_analyzer.py --files access.log auth.log --outdir reports --geoip-db /path/GeoLite2-Country.mmdb
+Usage:
+    python log_analyzer.py --files access.log auth.log --outdir reports --geoip-db /path/GeoLite2-Country.mmdb
+
+Example:
+    python log_analyzer.py --files access.log auth.log --outdir reports
 """
 from __future__ import annotations
 
@@ -19,6 +30,10 @@ import re
 import sys
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
+
+
+
+# Section: Dependencies
 
 def _ensure_package_local(package_name, import_name=None, prompt=True):
     import importlib
@@ -33,25 +48,25 @@ def _ensure_package_local(package_name, import_name=None, prompt=True):
     if not prompt:
         return None
     try:
-        ans = input(f"Dependency '{package_name}' is missing. Install now? [Y/n]: ").strip().lower()
+        ans = input(f"Dependência '{package_name}' em falta. Instalar agora? [s/N]: ").strip().lower()
     except Exception:
         return None
-    if ans not in ("", "y", "yes"):
+    if ans not in ("", "s", "sim", "y", "yes"):
         return None
     cmd = [_sys.executable, "-m", "pip", "install", package_name]
-    print(f"Running: {' '.join(cmd)}")
+    print(f"A executar: {' '.join(cmd)}")
     try:
         res = subprocess.run(cmd)
     except Exception as e:
-        print(f"Failed to run pip: {e}")
+        print(f"Falha ao executar o pip: {e}")
         return None
     if res.returncode != 0:
-        print(f"pip install exited with code {res.returncode}")
+        print(f"pip install terminou com o código {res.returncode}")
         return None
     try:
         return importlib.import_module(mod_name)
     except Exception as e:
-        print(f"Installed but failed to import {mod_name}: {e}")
+        print(f"Instalado, mas falhou ao importar {mod_name}: {e}")
         return None
 
 
@@ -63,6 +78,9 @@ try:
 except Exception:
     geoip2 = None
 
+
+
+# Section: Patterns
 
 APACHE_RE = re.compile(r"(?P<ip>\S+) \S+ \S+ \[(?P<time>[^\]]+)\] \"(?P<request>[^\"]*)\" (?P<status>\d{3}) (?P<size>\S+)(?: \"(?P<referrer>[^\"]*)\" \"(?P<agent>[^\"]*)\")?")
 
@@ -76,6 +94,9 @@ UFW_RE = re.compile(
 UFW_KV_RE = re.compile(r"(SRC|DST|PROTO|SPT|DPT)=([^\s]+)")
 
 
+
+# Section: Resolvers
+
 class GeoIPResolver:
     def __init__(self, db_path: Optional[str] = None):
         self.reader = None
@@ -83,25 +104,28 @@ class GeoIPResolver:
             try:
                 self.reader = geoip2.database.Reader(db_path)
             except Exception:
-                print(f"Warning: couldn't open GeoIP DB at {db_path}", file=sys.stderr)
+                print(f"Aviso: não foi possível abrir a BD GeoIP em {db_path}", file=sys.stderr)
 
     def country_for(self, ip: str) -> str:
         if self.reader:
             try:
                 rec = self.reader.country(ip)
-                name = rec.country.name or rec.country.iso_code or "UNKNOWN"
+                name = rec.country.name or rec.country.iso_code or "DESCONHECIDO"
                 return name
             except Exception:
-                return "UNKNOWN"
-        return "UNKNOWN"
+                return "DESCONHECIDO"
+        return "DESCONHECIDO"
 
+
+
+# Section: Parsers
 
 def parse_apache_line(line: str) -> Optional[Dict]:
     m = APACHE_RE.search(line)
     if not m:
         return None
     gd = m.groupdict()
-    # example time: 10/Oct/2000:13:55:36 -0700
+    # Example time: 10/Oct/2000:13:55:36 -0700
     try:
         dt = datetime.strptime(gd["time"], "%d/%b/%Y:%H:%M:%S %z")
         ts = dt.isoformat()
@@ -186,6 +210,9 @@ def parse_ufw_line(line: str) -> Optional[Dict]:
     }
 
 
+
+# Section: Reporting
+
 def analyze_files(file_paths: List[str], geoip_db: Optional[str], outdir: str) -> List[Dict]:
     resolver = GeoIPResolver(geoip_db)
     # We'll produce one report per input file (name derived from original filename)
@@ -210,7 +237,7 @@ def analyze_files(file_paths: List[str], geoip_db: Optional[str], outdir: str) -
 
     for path in file_paths:
         if not os.path.isfile(path):
-            print(f"Skipping missing file: {path}", file=sys.stderr)
+            print(f"A ignorar ficheiro em falta: {path}", file=sys.stderr)
             continue
         events: List[Dict] = []
         with open(path, "r", encoding="utf-8", errors="ignore") as fh:
@@ -223,12 +250,12 @@ def analyze_files(file_paths: List[str], geoip_db: Optional[str], outdir: str) -
                 if not e:
                     continue
                 ip = e.get("ip")
-                country = resolver.country_for(ip) if ip else "UNKNOWN"
+                country = resolver.country_for(ip) if ip else "DESCONHECIDO"
                 e["country"] = country
                 events.append(e)
                 all_events.append(e)
 
-        # write per-file reports named after the original file
+        # Write per-file reports named after the original file
         base = os.path.basename(path)
         name = os.path.splitext(base)[0]
         json_path = os.path.join(outdir, f"{name}_report.json")
@@ -240,10 +267,10 @@ def analyze_files(file_paths: List[str], geoip_db: Optional[str], outdir: str) -
             writer.writeheader()
             for ev in events:
                 writer.writerow({k: ev.get(k, "") for k in keys})
-        print(f"Wrote JSON -> {json_path}")
-        print(f"Wrote CSV  -> {csv_path}")
+        print(f"JSON gravado -> {json_path}")
+        print(f"CSV gravado  -> {csv_path}")
 
-    # also return aggregate events for summary
+    # Also return aggregate events for summary
     return all_events
 
 
@@ -256,7 +283,7 @@ def find_default_geoip_db() -> Optional[str]:
     Returns the first existing absolute path, or None.
     """
     here = os.path.abspath(os.path.dirname(__file__))
-    # script is in src/scripts/, data is expected at src/data/
+    # Script is in src/scripts/, data is expected at src/data/
     candidates = [
         os.path.join(here, "..", "data", "GeoLite2-City.mmdb"),
         os.path.join(here, "..", "data", "GeoLite2-Country.mmdb"),
@@ -278,33 +305,36 @@ def summarize_events(events):
         svc[e.get("service", "unknown")] += 1
         country[e.get("country", "UNKNOWN")] += 1
 
-    print("\nSummary:")
-    print("Services:")
+    print("\nResumo:")
+    print("Serviços:")
     for k, v in svc.most_common():
         print(f"  {k}: {v}")
-    print("Top countries:")
+    print("Top países:")
     for k, v in country.most_common(10):
         print(f"  {k}: {v}")
 
 
+
+# Section: CLI
+
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Analyze web and ssh logs and produce country/timestamp reports")
-    p.add_argument("files", nargs="+", help="Input log file(s) to analyze")
-    p.add_argument("--geoip-db", help="Path to GeoLite2-Country.mmdb (optional)")
-    p.add_argument("--outdir", "-o", default="reports", help="Output directory")
+    p = argparse.ArgumentParser(description="Analisa logs web e ssh e produz relatórios por país/timestamp")
+    p.add_argument("files", nargs="+", help="Ficheiros de log de entrada a analisar")
+    p.add_argument("--geoip-db", help="Caminho para GeoLite2-Country.mmdb (opcional)")
+    p.add_argument("--outdir", "-o", default="reports", help="Diretório de output")
     args = p.parse_args(argv)
     files = args.files or []
     if not files:
-        p.error("Please provide at least one log file to analyze")
+        p.error("Indique pelo menos um ficheiro de log para analisar")
     geoip_db = args.geoip_db
     if not geoip_db:
         auto = find_default_geoip_db()
         if auto:
             geoip_db = auto
-            print(f"Using GeoIP DB: {geoip_db}")
+            print(f"A usar BD GeoIP: {geoip_db}")
         else:
-            # continue without GeoIP but note it
-            print("No GeoIP DB provided and none found in src/data/ — country fields will be UNKNOWN")
+            # Continue without GeoIP but note it
+            print("Sem BD GeoIP fornecida e nenhuma encontrada em src/data/ — os países serão DESCONHECIDO")
 
     events = analyze_files(files, geoip_db, args.outdir)
     summarize_events(events)

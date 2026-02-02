@@ -1,11 +1,12 @@
 """
-Mestrado de Engenharia em Segurança Informatica
-Linguagens de Programação Dinamicas - Scripts Configuration
+Master's in Computer Security Engineering
+Dynamic Programming Languages - Scripts Configuration
 
-Martinho Caeiro (23917)
+Author: Martinho Caeiro (23917)
 
-Este módulo define a configuração dos scripts disponíveis, incluindo nomes, ficheiros e argumentos necessários.
-
+Description:
+    Defines the configuration of available scripts, including names, files,
+    and required arguments.
 """
 
 SCRIPTS = {

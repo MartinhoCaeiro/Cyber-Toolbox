@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 """
-Mestrado de Engenharia em Segurança Informatica
-Linguagens de Programação Dinamicas - Port Knocker
+Master's in Computer Security Engineering
+Dynamic Programming Languages - Port Knocker
 
-Martinho Caeiro (23917)
+Author: Martinho Caeiro (23917)
 
-Este script envia uma sequência de pacotes para portas específicas de um servidor remoto para ativar o acesso SSH.
+Description:
+    Sends a sequence of packets to specific ports of a remote server to enable SSH access.
 
-Uso:
-    python3 port_knocker.py <host> <porta1> <porta2> <porta3>
+Usage:
+    python3 port_knocker.py <host> <port1> <port2> <port3>
 
-Exemplo:
+Example:
     python3 port_knocker.py 192.168.1.100 7000 8000 9000
 """
 
@@ -18,8 +19,8 @@ import socket
 import sys
 import time
 
-# =====================
-# Port knocking
+
+# Section: Port knocking
 
 def send_knock(host, port):
     try:
@@ -29,8 +30,8 @@ def send_knock(host, port):
     except Exception as e:
         print(f"Erro ao enviar knock para {host}:{port} - {e}")
 
-# =====================
-# Main loop
+
+# Section: Main loop
 
 def main():
     try:
@@ -51,7 +52,7 @@ def main():
 
         for port in ports:
             send_knock(host, port)
-            time.sleep(1)  # Pequeno atraso entre os knocks
+            time.sleep(1)  # Small delay between knocks
 
         print("Sequência de knocks concluída.")
     except KeyboardInterrupt:

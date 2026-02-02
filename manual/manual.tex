@@ -1,0 +1,553 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+\lstdefinestyle{bash}{
+  language=bash,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{gray!5},
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  showstringspaces=false
+}
+
+\setlist[itemize]{noitemsep, topsep=4pt}
+
+\title{Cyber Toolbox \\ Manual do Utilizador}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Vis\~ao Geral}
+O \textbf{Cyber Toolbox} \`e um conjunto de scripts focados em an\'alise, seguran\c{c}a e administra\c{c}\~ao de sistemas. Este manual descreve o modo de utiliza\c{c}\~ao dos principais scripts e as respetivas op\c{c}\~oes.
+
+\section{Port Scanner}
+Varre portas em uma ou m\'ultiplas m\'aquinas remotas para identificar quais est\~ao abertas.
+
+\subsection{Uso B\'asico}
+\begin{lstlisting}[style=bash]
+python3 port_scanner.py <alvo1,alvo2,...> <porta_inicial> <porta_final>
+\end{lstlisting}
+
+\subsection{Exemplos}
+\begin{lstlisting}[style=bash]
+# Escanear um alvo
+python3 port_scanner.py 192.168.1.1 1 1024
+
+# Escanear multiplos alvos
+python3 port_scanner.py 192.168.1.1,192.168.1.2,google.com 80 443
+
+# Com argumentos nomeados
+python3 port_scanner.py --targets 127.0.0.1 --start-port 1 --end-port 65535
+
+# Com timeout customizado
+python3 port_scanner.py 127.0.0.1 1 1024 --timeout 5
+
+# Guardar relatorio
+python3 port_scanner.py 192.168.1.1 1 1024 --output scan_report.json
+\end{lstlisting}
+
+\subsection{Caracter\'isticas}
+\begin{itemize}
+  \item Suporta m\'ultiplos alvos (separados por v\'irgula)
+  \item Resolu\c{c}\~ao de nomes de hosts
+  \item Identifica servi\c{c}os associados \`as portas abertas
+  \item Timeout configur\'avel
+  \item Relat\'orio em JSON (opcional)
+\end{itemize}
+
+\subsection{Output (exemplo)}
+\begin{lstlisting}[style=bash]
+60 CYBER-TOOLBOX - PORT SCANNER
+============================================================
+
+Varrendo 192.168.1.1 (192.168.1.1) - Portas 1 a 1024
+------------------------------------------------------------
+Porta 22    aberta (ssh)
+Porta 80    aberta (http)
+Porta 443   aberta (https)
+
+RELATORIO FINAL
+============================================================
+
+192.168.1.1 (192.168.1.1)
+   Portas abertas: 22, 80, 443
+
+Varrimento concluido em 45.32s
+\end{lstlisting}
+
+\section{UDP Flooder}
+Envia pacotes UDP para simular um ataque de nega\c{c}\~ao de servi\c{c}o (DoS).
+
+\subsection{Uso B\'asico}
+\begin{lstlisting}[style=bash]
+python3 udp_flooder.py --target <ALVO> [OPTIONS]
+\end{lstlisting}
+
+\subsection{Op\c{c}\~oes}
+\begin{lstlisting}[style=bash]
+--target, -t      Alvo (IP ou hostname) [obrigatorio]
+--port, -p        Porta UDP (default: 53)
+--duration, -d    Duracao em segundos (default: 10)
+--packet-size, -s Tamanho do pacote em bytes (default: 1472)
+--threads, -n     Numero de threads (default: 4)
+\end{lstlisting}
+
+\subsection{Exemplos}
+\begin{lstlisting}[style=bash]
+# Flood basico (DNS - porta 53)
+python3 udp_flooder.py --target 192.168.1.1
+
+# Flood em porta NTP (123) por 30 segundos
+python3 udp_flooder.py --target 192.168.1.1 --port 123 --duration 30
+
+# Flood com 8 threads
+python3 udp_flooder.py --target 192.168.1.1 --threads 8
+
+# Flood com pacotes grandes
+python3 udp_flooder.py --target 192.168.1.1 --packet-size 65535
+\end{lstlisting}
+
+\subsection{Aviso Legal}
+Este script \`e \textbf{apenas} para fins educacionais em ambientes autorizados (laboratorial). O uso n\~ao autorizado \`e ilegal e pode violar leis de seguran\c{c}a inform\'atica.
+
+\section{SYN Flooder}
+Envia pacotes TCP SYN para simular um ataque de nega\c{c}\~ao de servi\c{c}o (SYN Flood/DoS) contra servi\c{c}os HTTP, SMTP ou outros.
+
+\subsection{Requisitos}
+\begin{lstlisting}[style=bash]
+# Requer Scapy para manipulacao de pacotes raw
+pip install scapy
+
+# Requer privilegios de root/administrator
+sudo python3 syn_flooder.py --target <ALVO> [OPTIONS]
+\end{lstlisting}
+
+\subsection{Uso B\'asico}
+\begin{lstlisting}[style=bash]
+python3 syn_flooder.py --target <ALVO> [OPTIONS]
+\end{lstlisting}
+
+\subsection{Op\c{c}\~oes}
+\begin{lstlisting}[style=bash]
+--target, -t    Alvo (IP ou hostname) [obrigatorio]
+--port, -p      Porta TCP (default: 80/HTTP)
+--duration, -d  Duracao em segundos (default: 10)
+--threads, -n   Numero de threads (default: 4)
+\end{lstlisting}
+
+\subsection{Exemplos}
+\begin{lstlisting}[style=bash]
+# SYN Flood basico contra HTTP (porta 80)
+sudo python3 syn_flooder.py --target 192.168.1.1
+
+# SYN Flood contra SMTP (porta 25) por 30 segundos
+sudo python3 syn_flooder.py --target 192.168.1.1 --port 25 --duration 30
+
+# SYN Flood com 8 threads
+sudo python3 syn_flooder.py --target 192.168.1.1 --port 443 --threads 8
+
+# SYN Flood contra servico customizado
+sudo python3 syn_flooder.py --target 192.168.1.1 --port 3306 --duration 20
+\end{lstlisting}
+
+\subsection{O que \`e um SYN Flood?}
+\begin{enumerate}[itemsep=2pt]
+  \item Atacante envia muitos pacotes TCP SYN (pedidos de conex\~ao) para um servidor
+  \item Servidor responde com SYN-ACK, aguardando o ACK final do cliente (three-way handshake)
+  \item Atacante nunca envia o ACK final (ou falsifica IP de origem)
+  \item Servidor fica com muitas conex\~oes meio-abertas (\textit{half-open})
+  \item Buffer de conex\~oes pendentes enche, servidor nega novas conex\~oes leg\'itimas
+\end{enumerate}
+
+\subsection{Caracter\'isticas}
+\begin{itemize}
+  \item Suporta m\'ultiplas threads para intensificar o ataque
+  \item IP de origem aleat\'orio (\textit{spoof}) em cada pacote
+  \item Portas de origem aleat\'orias
+  \item Taxa de pacotes por segundo (pps) no relat\'orio
+  \item Dura\c{c}\~ao configur\'avel
+  \item Resolu\c{c}\~ao de nomes de hosts
+  \item Confirma\c{c}\~ao de seguran\c{c}a antes de execu\c{c}\~ao
+\end{itemize}
+
+\subsection{Output (exemplo)}
+\begin{lstlisting}[style=bash]
+Alvo resolvido: 192.168.1.1 -> 192.168.1.1
+
+============================================================
+AVISO - SYN FLOOD ATTACK (TCP)
+============================================================
+Esta prestes a enviar um ataque DoS para: 192.168.1.1:80 (http)
+Duracao: 10s | Threads: 4
+
+AVISOS IMPORTANTES:
+  1. Este script requer privilegios de root/administrator
+  2. Um ataque SYN Flood pode danificar infraestruturas criticas
+  3. O uso nao autorizado e ILEGAL em muitas jurisdicoes
+  4. Utilize apenas em ambientes de teste autorizados
+------------------------------------------------------------
+
+Confirma que tem autorizacao? (s/N):
+
+Iniciando SYN Flood (TCP)
+   Alvo: 192.168.1.1:80
+   Duracao: 10 segundos
+   Threads: 4
+   Protocolo: TCP SYN (Half-Open Connections)
+------------------------------------------------------------
+  500 pacotes SYN enviados para 192.168.1.1:80
+  1000 pacotes SYN enviados para 192.168.1.1:80
+  1500 pacotes SYN enviados para 192.168.1.1:80
+
+============================================================
+RELATORIO - SYN FLOOD
+============================================================
+Alvo: 192.168.1.1:80
+Total de pacotes SYN enviados: 5,234
+Taxa de envio: 523 pps (pacotes por segundo)
+Duracao real: 10.01s
+Threads utilizadas: 4
+============================================================
+\end{lstlisting}
+
+\subsection{Aviso Legal}
+Este script \`e \textbf{apenas} para fins educacionais em ambientes autorizados (laboratorial). Um ataque SYN Flood pode danificar infraestruturas cr\'iticas e deixar sistemas inacess\'iveis. O uso n\~ao autorizado \`e \textbf{severamente ilegal} e pode resultar em penas de pris\~ao.
+
+\section{Log Analyzer}
+Analisa ficheiros de log (HTTP, SSH, UFW) para extrair informa\c{c}\~oes sobre tentativas de acesso, origem dos acessos e localiza\c{c}\~ao geogr\'afica.
+
+\subsection{Uso B\'asico}
+\begin{lstlisting}[style=bash]
+python3 log_analyzer.py <ficheiro1.log> [ficheiro2.log ...] [OPTIONS]
+\end{lstlisting}
+
+\subsection{Op\c{c}\~oes}
+\begin{lstlisting}[style=bash]
+--geoip-db, -g    Caminho para GeoLite2-Country.mmdb
+--outdir, -o      Diretorio de output (default: reports/)
+\end{lstlisting}
+
+\subsection{Exemplos}
+\begin{lstlisting}[style=bash]
+# Analisar ficheiros de log
+python3 log_analyzer.py /var/log/apache2/access.log
+
+# Analisar multiplos ficheiros
+python3 log_analyzer.py /var/log/apache2/access.log /var/log/auth.log
+
+# Com resolucao de pais
+python3 log_analyzer.py /var/log/auth.log --geoip-db /path/to/GeoLite2-City.mmdb
+
+# Especificar diretorio de output
+python3 log_analyzer.py /var/log/auth.log --outdir ./reports
+\end{lstlisting}
+
+\subsection{Formatos Suportados}
+\begin{itemize}
+  \item Apache/Nginx Combined Log: \texttt{192.168.1.1 - - [10/Oct/2000:13:55:36 -0700] "GET / HTTP/1.0" 200 1043}
+  \item SSH Auth Log: \texttt{Oct 10 13:55:36 host sshd[123]: Failed password for invalid user admin from 192.168.1.1 port 53840 ssh2}
+  \item UFW Firewall Log: \texttt{Oct 10 13:55:36 host UFW BLOCK IN=eth0 OUT= SRC=192.168.1.1 DST=...}
+\end{itemize}
+
+\subsection{Output (exemplo)}
+\begin{lstlisting}[style=bash]
+Log Analyzer - Analise de Registos
+
+Ficheiro processado: /var/log/auth.log
+156 eventos extraidos
+
+Summary:
+Services:
+  ssh: 156
+Top countries:
+  China: 45
+  Russia: 32
+  United States: 28
+  ...
+
+Relatorios guardados:
+- auth_report.json
+- auth_report.csv
+\end{lstlisting}
+
+\subsection{An\'alise Produzida}
+\begin{itemize}
+  \item Localiza\c{c}\~ao por pa\'is (se GeoLite2 dispon\'ivel)
+  \item Origem dos acessos (IPs)
+  \item Timestamps de tentativas de acesso
+  \item Status de autentica\c{c}\~ao (sucesso/falha)
+  \item Relat\'orios em JSON e CSV
+\end{itemize}
+
+\section{Messenger}
+Servi\c{c}o seguro de troca de mensagens entre cliente e servidor usando criptografia sim\'etrica e assim\'etrica.
+
+\subsection{Inicia\c{c}\~ao (Primeira Execu\c{c}\~ao)}
+\begin{lstlisting}[style=bash]
+# Gerar chaves RSA
+python3 messenger.py init-keys
+\end{lstlisting}
+
+\subsection{Servidor}
+\begin{lstlisting}[style=bash]
+# Iniciar servidor na porta padrao (9009)
+python3 messenger.py serve
+
+# Com host e porta customizada
+python3 messenger.py serve --host 0.0.0.0 --port 5555
+\end{lstlisting}
+
+\subsection{Cliente - Enviar Mensagem}
+\begin{lstlisting}[style=bash]
+python3 messenger.py send \
+    --from alice \
+    --to bob \
+    --message "Ola Bob!" \
+    --host 127.0.0.1 \
+    --port 9009
+\end{lstlisting}
+
+\subsection{Cliente - Listar Mensagens}
+\begin{lstlisting}[style=bash]
+python3 messenger.py list --user alice --host 127.0.0.1 --port 9009
+\end{lstlisting}
+
+\subsection{Cliente - Descarregar Mensagem}
+\begin{lstlisting}[style=bash]
+python3 messenger.py download \
+    --user alice \
+    --id <message-id> \
+    --host 127.0.0.1 \
+    --port 9009
+\end{lstlisting}
+
+\subsection{Cliente - Apagar Mensagem}
+\begin{lstlisting}[style=bash]
+python3 messenger.py delete \
+    --user alice \
+    --id <message-id> \
+    --host 127.0.0.1 \
+    --port 9009
+\end{lstlisting}
+
+\subsection{Cliente - Backup Sim\'etrico}
+\begin{lstlisting}[style=bash]
+python3 messenger.py backup-sym \
+    --password minha_senha_secreta \
+    --host 127.0.0.1 \
+    --port 9009
+\end{lstlisting}
+
+\subsection{Cliente - Backup Assim\'etrico}
+\begin{lstlisting}[style=bash]
+python3 messenger.py backup-asym --host 127.0.0.1 --port 9009
+\end{lstlisting}
+
+\subsection{Caracter\'isticas Principais}
+\begin{itemize}
+  \item Mensagens encriptadas com criptografia h\'ibrida (Fernet + RSA)
+  \item Suporte a m\'ultiplos utilizadores
+  \item Arquivo de mensagens no servidor
+  \item Backup com encripta\c{c}\~ao sim\'etrica (com senha) ou assim\'etrica (com chave p\'ublica)
+  \item Descarga seletiva de mensagens
+  \item Elimina\c{c}\~ao de mensagens apenas por participantes
+\end{itemize}
+
+\section{Port Knocker}
+Cliente para \textit{port knocking} - t\'ecnica de abertura de porta SSH atrav\'es de uma sequ\^encia de pacotes UDP.
+
+\subsection{Uso B\'asico}
+\begin{lstlisting}[style=bash]
+python3 port_knocker.py <host> <porta1> [porta2] [porta3] ...
+\end{lstlisting}
+
+\subsection{Exemplos}
+\begin{lstlisting}[style=bash]
+# Sequencia de knocking simples
+python3 port_knocker.py 192.168.1.100 7000 8000 9000
+
+# Com hostname
+python3 port_knocker.py exemplo.com 1000 2000 3000 4000
+
+# Uma unica porta
+python3 port_knocker.py 192.168.1.100 5555
+\end{lstlisting}
+
+\subsection{Configura\c{c}\~ao da M\'aquina Alvo (Linux)}
+Instale um servi\c{c}o de port knocking no servidor. Exemplo com \texttt{knockd}:
+
+\begin{lstlisting}[style=bash]
+# Instalar knockd
+sudo apt-get install knockd
+
+# Configurar /etc/knockd.conf
+[options]
+    logfile = /var/log/knockd.log
+
+[openSSH]
+    sequence = 7000,8000,9000
+    seq_timeout = 15
+    command = /sbin/iptables -I INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+    tcpflags = syn
+
+[closeSSH]
+    sequence = 9000,8000,7000
+    seq_timeout = 15
+    command = /sbin/iptables -D INPUT -s %IP% -p tcp --dport 22 -j ACCEPT
+    tcpflags = syn
+\end{lstlisting}
+
+\subsection{Fluxo T\'ipico}
+\begin{enumerate}[itemsep=2pt]
+  \item Servidor tem SSH bloqueado na firewall
+  \item Cliente executa: \texttt{python3 port\_knocker.py servidor.com 7000 8000 9000}
+  \item Servidor detecta a sequ\^encia de pacotes
+  \item Servidor abre porta 22 (SSH) para o IP do cliente
+  \item Cliente pode agora fazer SSH normalmente
+\end{enumerate}
+
+\section{Password Manager}
+Gestor de passwords simples com encripta\c{c}\~ao RSA + Fernet e autentica\c{c}\~ao de 2 fatores (TOTP).
+
+\subsection{Inicia\c{c}\~ao (Primeira Execu\c{c}\~ao)}
+\begin{lstlisting}[style=bash]
+python3 password_manager.py --init
+\end{lstlisting}
+
+Isto ir\'a:
+\begin{itemize}
+  \item Gerar par de chaves RSA
+  \item Gerar segredo TOTP e URI de provisioning
+  \item Criar base de dados vazia
+\end{itemize}
+
+\textbf{Importante:} Adicione o segredo TOTP \`a sua app autenticadora (Google Authenticator, Authy, Microsoft Authenticator, etc.).
+
+\subsection{Criar Registo}
+\begin{lstlisting}[style=bash]
+python3 password_manager.py \
+    --create \
+    --url example.com \
+    --user admin \
+    --pass senha123
+\end{lstlisting}
+
+\subsection{Listar Registos (Requer 2FA)}
+\begin{lstlisting}[style=bash]
+python3 password_manager.py --list --otp 123456
+\end{lstlisting}
+
+\subsection{Visualizar um Registo (Requer 2FA)}
+\begin{lstlisting}[style=bash]
+python3 password_manager.py --view <id> --otp 123456
+\end{lstlisting}
+
+\subsection{Atualizar Registo (Requer 2FA)}
+\begin{lstlisting}[style=bash]
+python3 password_manager.py \
+    --update <id> \
+    --url novositeexemplo.com \
+    --user novo_user \
+    --pass nova_senha \
+    --otp 123456
+\end{lstlisting}
+
+\subsection{Eliminar Registo (Requer 2FA)}
+\begin{lstlisting}[style=bash]
+python3 password_manager.py --delete <id> --otp 123456
+\end{lstlisting}
+
+\subsection{Modo Interativo}
+\begin{lstlisting}[style=bash]
+python3 password_manager.py
+\end{lstlisting}
+
+O menu interativo apresenta as op\c{c}\~oes para todas as opera\c{c}\~oes.
+
+\subsection{Caracter\'isticas}
+\begin{itemize}
+  \item Criptografia assim\'etrica (RSA) para as chaves
+  \item Criptografia sim\'etrica (Fernet) para os dados
+  \item Autentica\c{c}\~ao de 2 fatores (TOTP) obrigat\'oria para acesso
+  \item Opera\c{c}\~oes CRUD completas
+  \item Armazenamento seguro de 3 campos: URL, utilizador, password
+  \item Modo interativo ou linha de comando
+\end{itemize}
+
+\subsection{Ficheiros Criados}
+\begin{lstlisting}[style=bash]
+private_key.pem       (Chave privada - MANTEM SECRETO!)
+public_key.pem        (Chave publica)
+totp_secret.txt       (Segredo TOTP - guarde)
+records.json          (Base de dados encriptada de registos)
+\end{lstlisting}
+
+\section{Iniciar via Menu Principal}
+Todos os scripts podem ser executados atrav\'es do menu principal:
+\begin{lstlisting}[style=bash]
+python3 menu_launcher.py
+\end{lstlisting}
+
+O menu apresenta:
+\begin{lstlisting}[style=bash]
+======== MENU PRINCIPAL - CYBER TOOLBOX ========
+1 - Port Scanner
+2 - UDP Flooder
+3 - SYN Flooder
+4 - Log Analyzer
+5 - Messenger
+6 - Port Knocker
+7 - Password Manager
+0 - Sair
+===============================================
+\end{lstlisting}
+
+\section{Depend\^encias}
+Instale as depend\^encias com:
+\begin{lstlisting}[style=bash]
+pip install -r requirements.txt
+\end{lstlisting}
+
+Ou manualmente:
+\begin{lstlisting}[style=bash]
+pip install geoip2 requests cryptography pyotp
+\end{lstlisting}
+
+\section{Nota de Seguran\c{c}a}
+Alguns scripts requerem privil\'egios elevados (root/administrator) devido ao acesso a sockets brutos:
+\begin{lstlisting}[style=bash]
+sudo python3 udp_flooder.py --target 192.168.1.1
+sudo python3 menu_launcher.py
+\end{lstlisting}
+
+\section{Ficheiros de Log e Relat\'orios}
+\begin{itemize}
+  \item Logs: \texttt{src/logs/}
+  \item Relat\'orios: \texttt{reports/}
+  \item Dados do Password Manager: \texttt{src/scripts/}
+  \item Dados do Messenger: \texttt{src/data/messages/}, \texttt{src/data/keys/}, \texttt{src/data/backups/}
+\end{itemize}
+
+\end{document}

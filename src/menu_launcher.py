@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Mestrado de Engenharia em Segurança Informatica
-Linguagens de Programação Dinamicas - Menu Launcher
+Master's in Computer Security Engineering
+Dynamic Programming Languages - Menu Launcher
 
-Martinho Caeiro (23917)
+Author: Martinho Caeiro (23917)
 
-Menu launcher simples para gerir/lançar scripts na pasta ./scripts
+Description:
+    Simple menu launcher to manage/run scripts in the ./scripts folder.
 
-Uso:
+Usage:
+    python3 menu_launcher.py
+
+Example:
     python3 menu_launcher.py
 """
 
@@ -25,8 +29,8 @@ LOGS_DIR = "src/logs"
 
 last_result = None
 
-# =====================
-# Helpers
+
+# Section: Helpers
 
 def ensure_dirs():
     os.makedirs(SCRIPTS_DIR, exist_ok=True)
@@ -59,8 +63,8 @@ def prompt_args(arg_defs):
     return args
 
 
-# =====================
-# Script execution
+
+# Section: Script execution
 
 def run_script(path, args):
     global last_result
@@ -68,7 +72,7 @@ def run_script(path, args):
     py = sys.executable or "python3"
     cmd = [py, path] + args
 
-    print(f"\nExecutando: {' '.join(shlex.quote(c) for c in cmd)}")
+    print(f"\nA executar: {' '.join(shlex.quote(c) for c in cmd)}")
     print("(CTRL-C para interromper)\n")
 
     t0 = datetime.now()
@@ -88,17 +92,17 @@ def run_script(path, args):
     last_result = (path, datetime.now(), stdout, stderr, proc.returncode, duration)
 
     if stdout is not None:
-        print("--- STDOUT ---")
+        print("--- SAÍDA (STDOUT) ---")
         print(stdout or "(vazio)")
         if stderr:
-            print("--- STDERR ---")
+            print("--- ERROS (STDERR) ---")
             print(stderr)
 
-    print(f"--- return code: {proc.returncode} | duração: {duration:.2f}s ---")
+    print(f"--- código de retorno: {proc.returncode} | duração: {duration:.2f}s ---")
 
 
-# =====================
-# Main loop
+
+# Section: Main loop
 
 def main_menu():
     ensure_dirs()

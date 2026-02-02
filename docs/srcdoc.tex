@@ -1,0 +1,443 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{setspace}
+\onehalfspacing
+
+% Hyperlink colors
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+\title{Cyber-Toolbox \\ Documentação do Código-Fonte}
+\author{Martinho Caeiro (23917) \\ Mestrado de Engenharia em Segurança Informática \\ Linguagens de Programação Dinâmicas}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introdução}
+Este documento contém a documentação técnica extraída do código-fonte do projeto Cyber-Toolbox.
+Todos os scripts foram desenvolvidos em Python 3 com comentários em inglês e mensagens de saída em português (pt-PT).
+
+\section{Menu Principal}
+
+\subsection{menu\_launcher}
+\label{sec:menu_launcher}
+
+\textbf{Ficheiro:} \texttt{src/menu\_launcher.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Simple menu launcher to manage/run scripts in the ./scripts folder.
+
+\textbf{Uso:}
+\begin{verbatim}
+python3 menu_launcher.py
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python3 menu_launcher.py
+\end{verbatim}
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item Helpers
+    \item Script execution
+    \item Main loop
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item \texttt{ensure\_dirs()}
+    \item \texttt{clear\_screen()}
+    \item \texttt{show\_menu()}
+    \item \texttt{prompt\_args(arg\_defs)}
+    \item \texttt{run\_script(path, args)}
+    \item \texttt{main\_menu()}
+\end{itemize}
+
+\newpage
+\subsection{scripts\_config}
+\label{sec:scripts_config}
+
+\textbf{Ficheiro:} \texttt{src/scripts\_config.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Defines the configuration of available scripts, including names, files,
+and required arguments.
+
+\newpage
+\section{Scripts Individuais}
+
+\subsection{log\_analyzer}
+\label{sec:log_analyzer}
+
+\textbf{Ficheiro:} \texttt{src/scripts/log\_analyzer.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Analyze Apache/Nginx access logs and OpenSSH auth logs.
+
+\textbf{Funcionalidades:}
+\begin{itemize}
+    \item Parse Apache/Nginx combined log lines and OpenSSH auth.log lines.
+    \item Extract IP, timestamp, service, status (success/fail), and details.
+    \item Optionally resolve country via GeoLite2 DB (pass --geoip-db).
+    \item Emit JSON and CSV reports grouped per event.
+\end{itemize}
+
+\textbf{Uso:}
+\begin{verbatim}
+python log_analyzer.py --files access.log auth.log --outdir reports --geoip-db /path/GeoLite2-Country.mmdb
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python log_analyzer.py --files access.log auth.log --outdir reports
+\end{verbatim}
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item Dependencies
+    \item Patterns
+    \item Resolvers
+    \item Parsers
+    \item Reporting
+    \item CLI
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item Classe: \texttt{GeoIPResolver}
+    \item \texttt{parse\_apache\_line(line)}
+    \item \texttt{parse\_ssh\_line(line)}
+    \item \texttt{parse\_ufw\_line(line)}
+    \item \texttt{analyze\_files(file\_paths, geoip\_db, outdir)}
+    \item \texttt{find\_default\_geoip\_db()}
+    \\ Look for GeoLite2 DB files inside the repository `src/data` folder.
+    \item \texttt{summarize\_events(events)}
+    \\ Print a small summary: counts per service and top countries.
+    \item \texttt{main(argv)}
+    \item \texttt{country\_for(self, ip)}
+\end{itemize}
+
+\newpage
+\subsection{messenger}
+\label{sec:messenger}
+
+\textbf{Ficheiro:} \texttt{src/scripts/messenger.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Simple secure messenger (server + client CLI) for the Cyber-Toolbox project.
+
+\textbf{Funcionalidades:}
+\begin{itemize}
+    \item Server generates an RSA keypair (data/keys/) with init-keys.
+    \item Clients connect to the server (TCP) and send JSON commands.
+    \item Messages are stored on the server only, in data/messages/.
+    \item Each message is hybrid-encrypted: a Fernet payload + the Fernet key
+    \item encrypted with the server RSA public key.
+    \item Clients can list/download/delete messages where they are participants.
+    \item Server can produce backups (symmetric password-protected or asymmetric).
+\end{itemize}
+
+\textbf{Uso:}
+\begin{verbatim}
+python messenger.py init-keys
+python messenger.py serve --host 127.0.0.1 --port 9009
+python messenger.py send --from alice --to bob --message "Olá"
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python messenger.py list --user alice
+\end{verbatim}
+
+\textbf{Nota:}
+
+This script is intentionally simple and synchronous. It is meant for local
+testing and demonstration, not production use.
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item Dependencies
+    \item Key management
+    \item Message storage
+    \item Server
+    \item Client \& CLI
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item \texttt{ensure\_dirs()}
+    \item \texttt{generate\_rsa\_keys(key\_size)}
+    \item \texttt{load\_private\_key()}
+    \item \texttt{load\_public\_key()}
+    \item \texttt{hybrid\_encrypt(plaintext)}
+    \\ Encrypt plaintext with a fresh Fernet key, then encrypt that key with RSA public key.
+    \item \texttt{hybrid\_decrypt(b64\_enc\_sym\_key, b64\_payload)}
+    \item \texttt{store\_message(sender, recipients, text)}
+    \item \texttt{list\_messages\_for(user)}
+    \item \texttt{load\_message\_file(mid)}
+    \item \texttt{delete\_message(mid, actor)}
+    \item \texttt{backup\_all\_sym(password)}
+    \\ Create a password-protected backup file (Fernet with key derived from password).
+    \item \texttt{backup\_all\_asym()}
+    \\ Create an asymmetric backup encrypted with server public key.
+    \item Classe: \texttt{ThreadedTCPHandler}
+    \item \texttt{run\_server(host, port)}
+    \item \texttt{client\_send(host, port, payload)}
+    \item \texttt{print\_response(resp)}
+    \\ Print a response payload in pt-PT.
+    \item \texttt{main()}
+    \item \texttt{handle(self)}
+\end{itemize}
+
+\newpage
+\subsection{password\_manager}
+\label{sec:password_manager}
+
+\textbf{Ficheiro:} \texttt{src/scripts/password\_manager.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Simple password manager with RSA + Fernet encryption and TOTP 2FA.
+
+\textbf{Uso:}
+\begin{verbatim}
+python3 password_manager.py --init
+python3 password_manager.py --create --url example.com --user alice --pass s3cr3t
+python3 password_manager.py --list --otp 123456
+python3 password_manager.py --view <id> --otp 123456
+python3 password_manager.py --update <id> [--url ..] [--user ..] [--pass ..] --otp 123456
+python3 password_manager.py --delete <id> --otp 123456
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python3 password_manager.py --list --otp 123456
+Files created (in the same folder):
+- private_key.pem  (PEM, kept secret)
+- public_key.pem   (PEM)
+- totp_secret.txt  (base32 secret for TOTP)
+- records.json     (encrypted records database)
+\end{verbatim}
+
+\textbf{Nota:}
+
+This is a simple educational implementation. Do not use for production secrets.
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item Dependencies
+    \item Paths
+    \item Key management
+    \item Commands
+    \item CLI
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item \texttt{ensure\_files\_dir()}
+    \item \texttt{init\_keys\_and\_totp()}
+    \\ Generate RSA keypair and a new TOTP secret.
+    \item \texttt{load\_public\_key()}
+    \item \texttt{load\_private\_key()}
+    \item \texttt{load\_records()}
+    \item \texttt{save\_records(recs)}
+    \item \texttt{encrypt\_record\_plaintext(plaintext\_bytes)}
+    \\ Encrypt plaintext bytes using Fernet and encrypt the key with RSA public key.
+    \item \texttt{decrypt\_record(enc\_cipher\_b64, enc\_key\_b64)}
+    \item \texttt{require\_otp(code)}
+    \item \texttt{cmd\_create(args)}
+    \item \texttt{cmd\_list(args)}
+    \item \texttt{cmd\_view(args)}
+    \item \texttt{cmd\_delete(args)}
+    \item \texttt{cmd\_update(args)}
+    \item \texttt{parse\_args()}
+    \item \texttt{main()}
+    \item \texttt{run\_interactive\_menu()}
+    \item Classe: \texttt{A}
+    \item Classe: \texttt{A}
+    \item Classe: \texttt{A}
+    \item Classe: \texttt{A}
+    \item Classe: \texttt{A}
+\end{itemize}
+
+\newpage
+\subsection{port\_knocker}
+\label{sec:port_knocker}
+
+\textbf{Ficheiro:} \texttt{src/scripts/port\_knocker.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Sends a sequence of packets to specific ports of a remote server to enable SSH access.
+
+\textbf{Uso:}
+\begin{verbatim}
+python3 port_knocker.py <host> <port1> <port2> <port3>
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python3 port_knocker.py 192.168.1.100 7000 8000 9000
+\end{verbatim}
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item Port knocking
+    \item Main loop
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item \texttt{send\_knock(host, port)}
+    \item \texttt{main()}
+\end{itemize}
+
+\newpage
+\subsection{port\_scanner}
+\label{sec:port_scanner}
+
+\textbf{Ficheiro:} \texttt{src/scripts/port\_scanner.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Scans ports on multiple targets to identify which are open.
+
+\textbf{Uso:}
+\begin{verbatim}
+python3 port_scanner.py <target1,target2,...> <start_port> <end_port>
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python3 port_scanner.py target1.com,target2.com,127.0.0.1 1 1024
+\end{verbatim}
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item Scanner
+    \item CLI
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item \texttt{scan\_host(host, start\_port, end\_port, timeout)}
+    \\ Scan ports on a specific host.
+    \item \texttt{main()}
+\end{itemize}
+
+\newpage
+\subsection{syn\_flooder}
+\label{sec:syn_flooder}
+
+\textbf{Ficheiro:} \texttt{src/scripts/syn\_flooder.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Sends TCP SYN packets to simulate a denial-of-service attack (SYN Flood/DoS).
+Uses Scapy for low-level packet crafting.
+
+\textbf{Uso:}
+\begin{verbatim}
+python3 syn_flooder.py [--target HOST] [--port PORT] [--duration SECONDS] [--threads N]
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python3 syn_flooder.py --target 192.168.1.1 --port 80 --duration 10
+\end{verbatim}
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item SYN Flooder functions
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item \texttt{generate\_random\_ip()}
+    \\ Generate a random spoofed source IP address.
+    \item \texttt{generate\_random\_port()}
+    \\ Generate a random source port.
+    \item \texttt{syn\_flood\_worker(target, target\_port, duration, packets\_sent, lock)}
+    \\ Worker thread that sends TCP SYN packets to a target.
+    \item \texttt{flood\_target(target, target\_port, duration, num\_threads)}
+    \\ Send SYN flood with multiple threads.
+    \item \texttt{main()}
+\end{itemize}
+
+\newpage
+\subsection{udp\_flooder}
+\label{sec:udp_flooder}
+
+\textbf{Ficheiro:} \texttt{src/scripts/udp\_flooder.py}
+
+\textbf{Autor:} Martinho Caeiro (23917)
+
+\textbf{Descrição:}
+
+Sends UDP packets to a target (UDP Flood attack).
+
+\textbf{Uso:}
+\begin{verbatim}
+python3 udp_flooder.py [--target HOST] [--port PORT] [--duration SECONDS] [--threads N]
+\end{verbatim}
+
+\textbf{Exemplo:}
+\begin{verbatim}
+python3 udp_flooder.py --target 192.168.1.1 --port 53 --duration 10
+\end{verbatim}
+
+\textbf{Secções do código:}
+\begin{itemize}
+    \item Workers
+    \item Flood logic
+    \item CLI
+\end{itemize}
+
+\textbf{Funções e Classes principais:}
+\begin{itemize}
+    \item \texttt{udp\_flood\_worker(target, port, packet\_size, duration, packets\_sent)}
+    \\ Worker thread that sends UDP packets to a target.
+    \item \texttt{flood\_target(target, port, packet\_size, duration, num\_threads)}
+    \\ Send UDP flood with multiple threads.
+    \item \texttt{main()}
+\end{itemize}
+
+\newpage
+\end{document}
