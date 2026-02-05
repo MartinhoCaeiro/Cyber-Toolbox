@@ -88,16 +88,21 @@ def _ensure_package_local(package_name, import_name=None, prompt=True):
 # Prompt/install commonly-used packages used in this script
 _ensure_package_local("cryptography")
 _ensure_package_local("pyotp")
+_ensure_package_local("qrcode", import_name="qrcode")
 
 
 
 # Section: Paths
 
-BASE_DIR = os.path.dirname(__file__)
-KEY_PRIVATE = os.path.join(BASE_DIR, "private_key.pem")
-KEY_PUBLIC = os.path.join(BASE_DIR, "public_key.pem")
-TOTP_FILE = os.path.join(BASE_DIR, "totp_secret.txt")
-DB_FILE = os.path.join(BASE_DIR, "records.json")
+# Store keys in project root data folder, not in scripts folder
+SCRIPT_DIR = os.path.dirname(__file__)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))  # Go up two levels from scripts
+DATA_DIR = os.path.join(PROJECT_ROOT, "src/data")
+
+KEY_PRIVATE = os.path.join(DATA_DIR, "private_key.pem")
+KEY_PUBLIC = os.path.join(DATA_DIR, "public_key.pem")
+TOTP_SECRET_FILE = os.path.join(DATA_DIR, "totp_secret.txt")  # TOTP secret for 2FA
+DB_FILE = os.path.join(DATA_DIR, "password_records.json")
 
 
 
@@ -109,7 +114,10 @@ def ensure_files_dir():
 
 
 def init_keys_and_totp():
-    """Generate RSA keypair and a new TOTP secret."""
+    """Generate RSA keypair and setup TOTP 2FA with QR code."""
+    # Ensure data directory exists
+    os.makedirs(DATA_DIR, exist_ok=True)
+    
     try:
         from cryptography.hazmat.primitives import serialization
         from cryptography.hazmat.primitives.asymmetric import rsa
@@ -144,7 +152,7 @@ def init_keys_and_totp():
         raise
 
     secret = pyotp.random_base32()
-    with open(TOTP_FILE, "w") as f:
+    with open(TOTP_SECRET_FILE, "w") as f:
         f.write(secret)
 
     # Create empty DB if not exists
@@ -152,40 +160,69 @@ def init_keys_and_totp():
         with open(DB_FILE, "w") as f:
             json.dump([], f)
 
-    print("Chaves e segredo TOTP inicializados.")
+    print("\n=== Inicialização completa ===")
     print(f"Chave pública: {KEY_PUBLIC}")
     print(f"Chave privada: {KEY_PRIVATE} (mantenha em segredo!)")
-    print(f"Segredo TOTP guardado em: {TOTP_FILE}")
-    print("Adicione o segredo TOTP à sua app autenticadora (segredo base32). Também pode usar o URI de provisionamento abaixo:")
+    print(f"Base de dados: {DB_FILE}")
+    print("\n=== Autenticação TOTP 2FA ===")
+    print("✓ TOTP 2FA ativado (autenticação de dois fatores por código temporário)")
+    print("\nAdicione o segredo TOTP à sua app autenticadora (Google Authenticator, Authy, etc.)")
+    print(f"\nSegredo Base32: {secret}")
+    
+    # Generate and display QR code
     try:
         import pyotp
+        import qrcode
         totp = pyotp.TOTP(secret)
         uri = totp.provisioning_uri(name="password_manager", issuer_name="Cyber-Toolbox")
-        print(uri)
-    except Exception:
-        pass
+        
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(uri)
+        qr.make(fit=True)
+        
+        # Display in terminal
+        print("\nCódigo QR (escaneie com a sua app autenticadora):")
+        qr.print_ascii(invert=True)
+        
+        # Save QR code image
+        qr_path = os.path.join(DATA_DIR, "totp_qr.png")
+        with open(qr_path, "wb") as qr_file:
+            qr.make_image().save(qr_file)
+        print(f"\nCódigo QR também guardado em: {qr_path}")
+    except Exception as e:
+        print(f"Aviso: Não foi possível gerar o código QR: {e}")
+    
+    print("\n✓ Sistema pronto para utilização.\n")
 
 
 def load_public_key():
     from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
     from cryptography.hazmat.backends import default_backend
 
     if not os.path.exists(KEY_PUBLIC):
         raise FileNotFoundError("Chave pública não encontrada. Execute --init primeiro.")
     with open(KEY_PUBLIC, "rb") as f:
         data = f.read()
-    return serialization.load_pem_public_key(data, backend=default_backend())
+    key = serialization.load_pem_public_key(data, backend=default_backend())
+    if not isinstance(key, rsa.RSAPublicKey):
+        raise TypeError("Expected RSA public key")
+    return key
 
 
 def load_private_key():
     from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
     from cryptography.hazmat.backends import default_backend
 
     if not os.path.exists(KEY_PRIVATE):
         raise FileNotFoundError("Chave privada não encontrada. Execute --init primeiro.")
     with open(KEY_PRIVATE, "rb") as f:
         data = f.read()
-    return serialization.load_pem_private_key(data, password=None, backend=default_backend())
+    key = serialization.load_pem_private_key(data, password=None, backend=default_backend())
+    if not isinstance(key, rsa.RSAPrivateKey):
+        raise TypeError("Expected RSA private key")
+    return key
 
 
 def load_records():
@@ -241,11 +278,19 @@ def decrypt_record(enc_cipher_b64, enc_key_b64):
 
 
 def require_otp(code):
+    """Verify TOTP code for 2FA authentication.
+    
+    Args:
+        code: The 6-digit TOTP code from the authenticator app
+        
+    Returns:
+        True if code is valid, False otherwise
+    """
     import pyotp
-    if not os.path.exists(TOTP_FILE):
+    if not os.path.exists(TOTP_SECRET_FILE):
         print("TOTP não inicializado. Execute --init primeiro.")
         return False
-    with open(TOTP_FILE, "r") as f:
+    with open(TOTP_SECRET_FILE, "r") as f:
         secret = f.read().strip()
     totp = pyotp.TOTP(secret)
     try:
@@ -395,14 +440,30 @@ def parse_args():
     return p.parse_args()
 
 
+def check_and_auto_init():
+    """Check if initialization is needed and perform it automatically."""
+    needs_init = not os.path.exists(KEY_PRIVATE) or not os.path.exists(KEY_PUBLIC) or not os.path.exists(TOTP_SECRET_FILE)
+    
+    if needs_init:
+        print("\n⚠️  Inicialização necessária (chaves não encontradas).")
+        print("A inicializar automaticamente...\n")
+        init_keys_and_totp()
+        return True
+    return False
+
+
 def main():
     args = parse_args()
     if args.init:
         init_keys_and_totp()
         return
 
+    # Auto-initialize if needed
+    check_and_auto_init()
+
     # Ensure DB file exists
     if not os.path.exists(DB_FILE):
+        os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
         with open(DB_FILE, "w") as f:
             json.dump([], f)
 
@@ -425,27 +486,22 @@ def run_interactive_menu():
     print("Gestor de Palavras-passe — modo interativo")
     print("Nota: ver/apagar/atualizar registos requer OTP 2FA.")
     while True:
-        print("\nOpções:\n 1) Criar\n 2) Listar (requer OTP)\n 3) Ver (requer OTP)\n 4) Atualizar (requer OTP)\n 5) Apagar (requer OTP)\n 6) Sair")
+        print("\nOpções:\n 1) Criar\n 2) Listar (requer 2FA)\n 3) Ver (requer 2FA)\n 4) Atualizar (requer 2FA)\n 5) Apagar (requer 2FA)\n 6) Sair")
         choice = input("Escolha: ").strip()
         if choice == "1":
             url = input("URL: ").strip()
             user = input("Utilizador: ").strip()
             passwd = input("Palavra-passe: ").strip()
-            class A:
-                pass
-            a = A()
-            a.url = url; a.user = user; a.passwd = passwd
+            a = argparse.Namespace(url=url, user=user, passwd=passwd)
             cmd_create(a)
         elif choice == "2":
             otp = input("OTP: ").strip()
-            class A: pass
-            a = A(); a.otp = otp
+            a = argparse.Namespace(otp=otp)
             cmd_list(a)
         elif choice == "3":
             rid = input("ID do registo: ").strip()
             otp = input("OTP: ").strip()
-            class A: pass
-            a = A(); a.id = rid; a.otp = otp
+            a = argparse.Namespace(id=rid, otp=otp)
             cmd_view(a)
         elif choice == "4":
             rid = input("ID do registo: ").strip()
@@ -453,14 +509,12 @@ def run_interactive_menu():
             url = input("Novo URL (Enter para ignorar): ").strip() or None
             user = input("Novo utilizador (Enter para ignorar): ").strip() or None
             passwd = input("Nova palavra-passe (Enter para ignorar): ").strip() or None
-            class A: pass
-            a = A(); a.id = rid; a.otp = otp; a.url = url; a.user = user; a.passwd = passwd
+            a = argparse.Namespace(id=rid, otp=otp, url=url, user=user, passwd=passwd)
             cmd_update(a)
         elif choice == "5":
             rid = input("ID do registo: ").strip()
             otp = input("OTP: ").strip()
-            class A: pass
-            a = A(); a.id = rid; a.otp = otp
+            a = argparse.Namespace(id=rid, otp=otp)
             cmd_delete(a)
         elif choice == "6":
             print("Adeus")

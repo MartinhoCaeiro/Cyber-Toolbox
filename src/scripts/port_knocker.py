@@ -24,11 +24,13 @@ import time
 
 def send_knock(host, port):
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.sendto(b"knock", (host, port))
-        print(f"Knock enviado para {host}:{port}")
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.2) 
+        s.connect_ex((host, port)) 
+        s.close()
+        print(f"Knock enviado para {host}:{port} (TCP)")
     except Exception as e:
-        print(f"Erro ao enviar knock para {host}:{port} - {e}")
+        print(f"Erro em {port}: {e}")
 
 
 # Section: Main loop
@@ -52,7 +54,6 @@ def main():
 
         for port in ports:
             send_knock(host, port)
-            time.sleep(1)  # Small delay between knocks
 
         print("Sequência de knocks concluída.")
     except KeyboardInterrupt:

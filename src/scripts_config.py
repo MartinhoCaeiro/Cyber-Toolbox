@@ -22,12 +22,18 @@ SCRIPTS = {
     "2": {
         "name": "UDP Flooder",
         "file": "udp_flooder.py",
-        "args": [],
+        "args": [
+            ("target", "Alvo (IP ou hostname)"),
+            ("duration", "Duração em segundos"),
+        ],
     },
     "3": {
         "name": "SYN Flooder",
         "file": "syn_flooder.py",
-        "args": [],
+        "args": [
+            ("target", "Alvo (IP ou hostname)"),
+            ("duration", "Duração em segundos"),
+        ],
     },
     "4": {
         "name": "Log Analyzer",
@@ -37,11 +43,6 @@ SCRIPTS = {
         ],
     },
     "5": {
-        "name": "Messenger",
-        "file": "messenger.py",
-        "args": [],
-    },
-    "6": {
         "name": "Port Knocker",
         "file": "port_knocker.py",
         "args": [
@@ -49,7 +50,7 @@ SCRIPTS = {
             ("ports", "Portas (7000 8000 9000)"),
         ],
     },
-    "7": {
+    "6": {
         "name": "Password Manager",
         "file": "password_manager.py",
         "args": [],

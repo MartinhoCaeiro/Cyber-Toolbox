@@ -23,8 +23,6 @@ Example:
 from __future__ import annotations
 
 import argparse
-import csv
-import json
 import os
 import re
 import sys
@@ -77,6 +75,18 @@ try:
     import geoip2.database
 except Exception:
     geoip2 = None
+
+# Try to ensure reportlab is available for PDF generation
+_ensure_package_local("reportlab")
+try:
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.lib.units import inch
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    reportlab = True
+except Exception:
+    reportlab = None
 
 
 
@@ -213,27 +223,69 @@ def parse_ufw_line(line: str) -> Optional[Dict]:
 
 # Section: Reporting
 
+def create_pdf_report(events: List[Dict], pdf_path: str, title: str):
+    """Generate a PDF report from events using reportlab."""
+    if not reportlab:
+        print(f"Aviso: reportlab não está disponível, a saltar criação do PDF {pdf_path}", file=sys.stderr)
+        return
+
+    doc = SimpleDocTemplate(pdf_path, pagesize=landscape(A4))
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Title
+    title_para = Paragraph(f"<b>{title}</b>", styles['Title'])
+    elements.append(title_para)
+    elements.append(Spacer(1, 0.3*inch))
+
+    if not events:
+        no_data = Paragraph("Sem eventos para apresentar", styles['Normal'])
+        elements.append(no_data)
+        doc.build(elements)
+        return
+
+    # Prepare table data
+    keys = ["service", "ip", "country", "timestamp", "status", "action", "method", "path"]
+    headers = ["Serviço", "IP", "País", "Timestamp", "Estado", "Ação", "Método", "Caminho"]
+    
+    data = [headers]
+    for ev in events:
+        row = []
+        for k in keys:
+            val = ev.get(k, "")
+            if val is None:
+                val = ""
+            # Truncate long values
+            val_str = str(val)
+            if len(val_str) > 40:
+                val_str = val_str[:37] + "..."
+            row.append(val_str)
+        data.append(row)
+
+    # Create table
+    table = Table(data)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('FONTSIZE', (0, 1), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+    ]))
+
+    elements.append(table)
+    doc.build(elements)
+
+
 def analyze_files(file_paths: List[str], geoip_db: Optional[str], outdir: str) -> List[Dict]:
     resolver = GeoIPResolver(geoip_db)
     # We'll produce one report per input file (name derived from original filename)
     os.makedirs(outdir, exist_ok=True)
     all_events: List[Dict] = []
-    keys = [
-        "service",
-        "ip",
-        "dst",
-        "country",
-        "timestamp",
-        "status",
-        "action",
-        "proto",
-        "spt",
-        "dpt",
-        "method",
-        "path",
-        "size",
-        "msg",
-    ]
 
     for path in file_paths:
         if not os.path.isfile(path):
@@ -258,17 +310,11 @@ def analyze_files(file_paths: List[str], geoip_db: Optional[str], outdir: str) -
         # Write per-file reports named after the original file
         base = os.path.basename(path)
         name = os.path.splitext(base)[0]
-        json_path = os.path.join(outdir, f"{name}_report.json")
-        csv_path = os.path.join(outdir, f"{name}_report.csv")
-        with open(json_path, "w", encoding="utf-8") as jfh:
-            json.dump(events, jfh, indent=2, ensure_ascii=False)
-        with open(csv_path, "w", newline="", encoding="utf-8") as cfh:
-            writer = csv.DictWriter(cfh, fieldnames=keys, extrasaction="ignore")
-            writer.writeheader()
-            for ev in events:
-                writer.writerow({k: ev.get(k, "") for k in keys})
-        print(f"JSON gravado -> {json_path}")
-        print(f"CSV gravado  -> {csv_path}")
+        pdf_path = os.path.join(outdir, f"{name}_report.pdf")
+        
+        create_pdf_report(events, pdf_path, f"Relatório de Log: {name}")
+        
+        print(f"PDF gravado  -> {pdf_path}")
 
     # Also return aggregate events for summary
     return all_events

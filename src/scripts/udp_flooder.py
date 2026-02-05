@@ -8,6 +8,9 @@ Author: Martinho Caeiro (23917)
 
 Description:
     Sends UDP packets to a target (UDP Flood attack).
+    
+Check your network interface with:
+    sudo tcpdump -i eth0 udp
 
 Usage:
     python3 udp_flooder.py [--target HOST] [--port PORT] [--duration SECONDS] [--threads N]
@@ -108,20 +111,16 @@ def main():
         description="UDP Flooder - Ataque de negação de serviço (DoS) via UDP",
         epilog="Apenas para fins educacionais em ambientes autorizados"
     )
-    parser.add_argument("--target", "-t", help="Alvo (IP ou hostname)")
+    parser.add_argument("target", help="Alvo (IP ou hostname)")
+    parser.add_argument("duration", type=int, help="Duração em segundos")
     parser.add_argument("--port", "-p", type=int, default=53, help="Porta UDP (default: 53)")
-    parser.add_argument("--duration", "-d", type=int, default=10, help="Duração em segundos (default: 10)")
     parser.add_argument("--packet-size", "-s", type=int, default=1472, help="Tamanho do pacote em bytes (default: 1472)")
     parser.add_argument("--threads", "-n", type=int, default=4, help="Número de threads (default: 4)")
 
-    args = parser.parse_args()
-
-    # If target was not provided, prompt
-    if not args.target:
-        args.target = input("Alvo (IP ou hostname): ").strip()
-        if not args.target:
-            print("Nenhum alvo fornecido. Abortando.")
-            sys.exit(1)
+    try:
+        args = parser.parse_args()
+    except SystemExit:
+        sys.exit(1)
 
     # Validations
     if args.port < 1 or args.port > 65535:

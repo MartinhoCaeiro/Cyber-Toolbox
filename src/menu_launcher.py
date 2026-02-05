@@ -25,16 +25,12 @@ from datetime import datetime
 from scripts_config import SCRIPTS
 
 SCRIPTS_DIR = "src/scripts"
-LOGS_DIR = "src/logs"
-
-last_result = None
 
 
 # Section: Helpers
 
 def ensure_dirs():
     os.makedirs(SCRIPTS_DIR, exist_ok=True)
-    os.makedirs(LOGS_DIR, exist_ok=True)
 
 
 def clear_screen():
@@ -67,8 +63,6 @@ def prompt_args(arg_defs):
 # Section: Script execution
 
 def run_script(path, args):
-    global last_result
-
     py = sys.executable or "python3"
     cmd = [py, path] + args
 
@@ -89,7 +83,6 @@ def run_script(path, args):
         return
 
     duration = (datetime.now() - t0).total_seconds()
-    last_result = (path, datetime.now(), stdout, stderr, proc.returncode, duration)
 
     if stdout is not None:
         print("--- SAÍDA (STDOUT) ---")
