@@ -58,9 +58,6 @@ python3 port_scanner.py 192.168.1.1 1 1024
 # Escanear multiplos alvos
 python3 port_scanner.py 192.168.1.1,192.168.1.2,google.com 80 443
 
-# Com argumentos nomeados
-python3 port_scanner.py --targets 127.0.0.1 --start-port 1 --end-port 65535
-
 # Com timeout customizado
 python3 port_scanner.py 127.0.0.1 1 1024 --timeout 5
 
@@ -79,7 +76,8 @@ python3 port_scanner.py 192.168.1.1 1 1024 --output scan_report.json
 
 \subsection{Output (exemplo)}
 \begin{lstlisting}[style=bash]
-60 CYBER-TOOLBOX - PORT SCANNER
+============================================================
+CYBER-TOOLBOX - VARREDOR DE PORTAS
 ============================================================
 
 Varrendo 192.168.1.1 (192.168.1.1) - Portas 1 a 1024
@@ -172,14 +170,6 @@ sudo python3 syn_flooder.py --target 192.168.1.1 --port 443 --threads 8
 sudo python3 syn_flooder.py --target 192.168.1.1 --port 3306 --duration 20
 \end{lstlisting}
 
-\subsection{O que \`e um SYN Flood?}
-\begin{enumerate}[itemsep=2pt]
-  \item Atacante envia muitos pacotes TCP SYN (pedidos de conex\~ao) para um servidor
-  \item Servidor responde com SYN-ACK, aguardando o ACK final do cliente (three-way handshake)
-  \item Atacante nunca envia o ACK final (ou falsifica IP de origem)
-  \item Servidor fica com muitas conex\~oes meio-abertas (\textit{half-open})
-  \item Buffer de conex\~oes pendentes enche, servidor nega novas conex\~oes leg\'itimas
-\end{enumerate}
 
 \subsection{Caracter\'isticas}
 \begin{itemize}
@@ -197,7 +187,7 @@ sudo python3 syn_flooder.py --target 192.168.1.1 --port 3306 --duration 20
 Alvo resolvido: 192.168.1.1 -> 192.168.1.1
 
 ============================================================
-AVISO - SYN FLOOD ATTACK (TCP)
+AVISO - ATAQUE SYN FLOOD (TCP)
 ============================================================
 Esta prestes a enviar um ataque DoS para: 192.168.1.1:80 (http)
 Duracao: 10s | Threads: 4
@@ -215,7 +205,7 @@ Iniciando SYN Flood (TCP)
    Alvo: 192.168.1.1:80
    Duracao: 10 segundos
    Threads: 4
-   Protocolo: TCP SYN (Half-Open Connections)
+  Protocolo: TCP SYN (ligacoes half-open)
 ------------------------------------------------------------
   500 pacotes SYN enviados para 192.168.1.1:80
   1000 pacotes SYN enviados para 192.168.1.1:80
@@ -245,7 +235,7 @@ python3 log_analyzer.py <ficheiro1.log> [ficheiro2.log ...] [OPTIONS]
 
 \subsection{Op\c{c}\~oes}
 \begin{lstlisting}[style=bash]
---geoip-db, -g    Caminho para GeoLite2-Country.mmdb
+--geoip-db        Caminho para GeoLite2-Country.mmdb
 --outdir, -o      Diretorio de output (default: reports/)
 \end{lstlisting}
 
@@ -273,23 +263,17 @@ python3 log_analyzer.py /var/log/auth.log --outdir ./reports
 
 \subsection{Output (exemplo)}
 \begin{lstlisting}[style=bash]
-Log Analyzer - Analise de Registos
+A usar BD GeoIP: /path/to/GeoLite2-City.mmdb
+JSON gravado -> reports/auth_report.json
+CSV gravado  -> reports/auth_report.csv
 
-Ficheiro processado: /var/log/auth.log
-156 eventos extraidos
-
-Summary:
-Services:
+Resumo:
+Servicos:
   ssh: 156
-Top countries:
+Top paises:
   China: 45
   Russia: 32
   United States: 28
-  ...
-
-Relatorios guardados:
-- auth_report.json
-- auth_report.csv
 \end{lstlisting}
 
 \subsection{An\'alise Produzida}
@@ -299,80 +283,6 @@ Relatorios guardados:
   \item Timestamps de tentativas de acesso
   \item Status de autentica\c{c}\~ao (sucesso/falha)
   \item Relat\'orios em JSON e CSV
-\end{itemize}
-
-\section{Messenger}
-Servi\c{c}o seguro de troca de mensagens entre cliente e servidor usando criptografia sim\'etrica e assim\'etrica.
-
-\subsection{Inicia\c{c}\~ao (Primeira Execu\c{c}\~ao)}
-\begin{lstlisting}[style=bash]
-# Gerar chaves RSA
-python3 messenger.py init-keys
-\end{lstlisting}
-
-\subsection{Servidor}
-\begin{lstlisting}[style=bash]
-# Iniciar servidor na porta padrao (9009)
-python3 messenger.py serve
-
-# Com host e porta customizada
-python3 messenger.py serve --host 0.0.0.0 --port 5555
-\end{lstlisting}
-
-\subsection{Cliente - Enviar Mensagem}
-\begin{lstlisting}[style=bash]
-python3 messenger.py send \
-    --from alice \
-    --to bob \
-    --message "Ola Bob!" \
-    --host 127.0.0.1 \
-    --port 9009
-\end{lstlisting}
-
-\subsection{Cliente - Listar Mensagens}
-\begin{lstlisting}[style=bash]
-python3 messenger.py list --user alice --host 127.0.0.1 --port 9009
-\end{lstlisting}
-
-\subsection{Cliente - Descarregar Mensagem}
-\begin{lstlisting}[style=bash]
-python3 messenger.py download \
-    --user alice \
-    --id <message-id> \
-    --host 127.0.0.1 \
-    --port 9009
-\end{lstlisting}
-
-\subsection{Cliente - Apagar Mensagem}
-\begin{lstlisting}[style=bash]
-python3 messenger.py delete \
-    --user alice \
-    --id <message-id> \
-    --host 127.0.0.1 \
-    --port 9009
-\end{lstlisting}
-
-\subsection{Cliente - Backup Sim\'etrico}
-\begin{lstlisting}[style=bash]
-python3 messenger.py backup-sym \
-    --password minha_senha_secreta \
-    --host 127.0.0.1 \
-    --port 9009
-\end{lstlisting}
-
-\subsection{Cliente - Backup Assim\'etrico}
-\begin{lstlisting}[style=bash]
-python3 messenger.py backup-asym --host 127.0.0.1 --port 9009
-\end{lstlisting}
-
-\subsection{Caracter\'isticas Principais}
-\begin{itemize}
-  \item Mensagens encriptadas com criptografia h\'ibrida (Fernet + RSA)
-  \item Suporte a m\'ultiplos utilizadores
-  \item Arquivo de mensagens no servidor
-  \item Backup com encripta\c{c}\~ao sim\'etrica (com senha) ou assim\'etrica (com chave p\'ublica)
-  \item Descarga seletiva de mensagens
-  \item Elimina\c{c}\~ao de mensagens apenas por participantes
 \end{itemize}
 
 \section{Port Knocker}
@@ -532,22 +442,14 @@ pip install -r requirements.txt
 
 Ou manualmente:
 \begin{lstlisting}[style=bash]
-pip install geoip2 requests cryptography pyotp
+pip install geoip2 cryptography pyotp scapy reportlab qrcode
 \end{lstlisting}
 
 \section{Nota de Seguran\c{c}a}
 Alguns scripts requerem privil\'egios elevados (root/administrator) devido ao acesso a sockets brutos:
 \begin{lstlisting}[style=bash]
-sudo python3 udp_flooder.py --target 192.168.1.1
-sudo python3 menu_launcher.py
+sudo python3 syn_flooder.py --target 192.168.1.1
 \end{lstlisting}
 
-\section{Ficheiros de Log e Relat\'orios}
-\begin{itemize}
-  \item Logs: \texttt{src/logs/}
-  \item Relat\'orios: \texttt{reports/}
-  \item Dados do Password Manager: \texttt{src/scripts/}
-  \item Dados do Messenger: \texttt{src/data/messages/}, \texttt{src/data/keys/}, \texttt{src/data/backups/}
-\end{itemize}
 
 \end{document}

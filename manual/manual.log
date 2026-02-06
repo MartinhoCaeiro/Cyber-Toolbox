@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.7)  2 FEB 2026 13:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.11.7)  6 FEB 2026 13:16
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -381,14 +381,14 @@ LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 49
  (C:\Users\Marti\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 73.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 70.
  (C:\Users\Marti\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
 [3{C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 113.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 111.
 
 
 [4]
@@ -396,12 +396,12 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
 [5]
 
 [6]
-Overfull \hbox (1.49092pt too wide) in paragraph at lines 269--270
+Overfull \hbox (1.49092pt too wide) in paragraph at lines 259--260
 []\T1/lmr/m/n/10.95 Apache/Nginx Com-bined Log: \T1/lmtt/m/n/10.95 192.168.1.1 - - [10/Oct/2000:13:55:36 -0700] "GET
  []
 
 
-Overfull \hbox (6.38785pt too wide) in paragraph at lines 271--272
+Overfull \hbox (6.38785pt too wide) in paragraph at lines 261--262
 []\T1/lmr/m/n/10.95 UFW Fire-wall Log: \T1/lmtt/m/n/10.95 Oct 10 13:55:36 host UFW BLOCK IN=eth0 OUT= SRC=192.168.1.1
  []
 
@@ -413,30 +413,26 @@ Overfull \hbox (6.38785pt too wide) in paragraph at lines 271--272
 
 [9]
 
-[10]
-
-[11]
-
-[12] (manual.aux)
+[10] (manual.aux)
  ***********
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-10-09>
  ***********
 Package rerunfilecheck Info: File `manual.out' has not changed.
-(rerunfilecheck)             Checksum: 493B80D811B9511DA2170DE2454F636A;8140.
+(rerunfilecheck)             Checksum: 357AE6E8048543C12B8DCAB7A59EBC9A;5937.
  ) 
 Here is how much of TeX's memory you used:
- 12534 strings out of 473897
- 190602 string characters out of 5726462
- 965579 words of memory out of 5000000
- 34924 multiletter control sequences out of 15000+600000
+ 12440 strings out of 473897
+ 189298 string characters out of 5726462
+ 1016576 words of memory out of 5000000
+ 34895 multiletter control sequences out of 15000+600000
  603655 words of font info for 65 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,79p,371b,2018s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,6n,79p,371b,2016s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr17.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtk10.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/Marti/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtti10.pfb>
-Output written on manual.pdf (12 pages, 356249 bytes).
+Output written on manual.pdf (10 pages, 333045 bytes).
 PDF statistics:
- 734 PDF objects out of 1000 (max. 8388607)
- 345 named destinations out of 1000 (max. 500000)
- 449 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 602 PDF objects out of 1000 (max. 8388607)
+ 280 named destinations out of 1000 (max. 500000)
+ 353 words of extra memory for PDF output out of 10000 (max. 10000000)
 

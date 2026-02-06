@@ -18,9 +18,7 @@ Example:
 
 import os
 import sys
-import shlex
 import subprocess
-from datetime import datetime
 
 from scripts_config import SCRIPTS
 
@@ -66,32 +64,10 @@ def run_script(path, args):
     py = sys.executable or "python3"
     cmd = [py, path] + args
 
-    print(f"\nA executar: {' '.join(shlex.quote(c) for c in cmd)}")
-    print("(CTRL-C para interromper)\n")
-
-    t0 = datetime.now()
-
     try:
-        if args:
-            proc = subprocess.run(cmd, capture_output=True, text=True)
-            stdout, stderr = proc.stdout, proc.stderr
-        else:
-            proc = subprocess.run(cmd)
-            stdout, stderr = None, None
+        subprocess.run(cmd)
     except KeyboardInterrupt:
         print("\nExecução interrompida.")
-        return
-
-    duration = (datetime.now() - t0).total_seconds()
-
-    if stdout is not None:
-        print("--- SAÍDA (STDOUT) ---")
-        print(stdout or "(vazio)")
-        if stderr:
-            print("--- ERROS (STDERR) ---")
-            print(stderr)
-
-    print(f"--- código de retorno: {proc.returncode} | duração: {duration:.2f}s ---")
 
 
 

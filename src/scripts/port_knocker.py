@@ -6,18 +6,22 @@ Dynamic Programming Languages - Port Knocker
 Author: Martinho Caeiro (23917)
 
 Description:
-    Sends a sequence of packets to specific ports of a remote server to enable SSH access.
+    Sends a sequence of TCP packets to specific ports of a remote server.
+    Used to enable SSH access or trigger port-knock based firewalls.
 
 Usage:
-    python3 port_knocker.py <host> <port1> <port2> <port3>
+    python3 port_knocker.py <host> <port1> [port2] [port3] ...
 
 Example:
     python3 port_knocker.py 192.168.1.100 7000 8000 9000
+    python3 port_knocker.py target.com 1234
+
+Note:
+    Requires at least one port. Timeout between knocks is 0.2 seconds.
 """
 
 import socket
 import sys
-import time
 
 
 # Section: Port knocking

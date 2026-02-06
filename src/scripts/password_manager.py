@@ -7,26 +7,25 @@ Author: Martinho Caeiro (23917)
 
 Description:
     Simple password manager with RSA + Fernet encryption and TOTP 2FA.
+    Supports interactive mode and command-line operations.
 
 Usage:
+    python3 password_manager.py [--init] [--create|--list|--view|--update|--delete] [OPTIONS]
+
+Example:
     python3 password_manager.py --init
     python3 password_manager.py --create --url example.com --user alice --pass s3cr3t
     python3 password_manager.py --list --otp 123456
-    python3 password_manager.py --view <id> --otp 123456
-    python3 password_manager.py --update <id> [--url ..] [--user ..] [--pass ..] --otp 123456
-    python3 password_manager.py --delete <id> --otp 123456
+    python3 password_manager.py (interactive mode if no arguments)
 
-Example:
-    python3 password_manager.py --list --otp 123456
-
-Files created (in the same folder):
-    - private_key.pem  (PEM, kept secret)
-    - public_key.pem   (PEM)
-    - totp_secret.txt  (base32 secret for TOTP)
-    - records.json     (encrypted records database)
+Security:
+    - RSA 2048-bit encryption for key storage
+    - Fernet (AES-128) encryption for records
+    - TOTP 2FA authentication for sensitive operations
+    - All files stored in src/data/ directory
 
 Note:
-    This is a simple educational implementation. Do not use for production secrets.
+    Educational implementation. Do not use for production secrets.
 """
 
 import argparse
@@ -37,58 +36,17 @@ import sys
 import uuid
 from datetime import datetime
 
-def _ensure_package_local(package_name, import_name=None, prompt=True):
-    """Minimal local helper to prompt+install a pip package at runtime.
-
-    Returns the imported module on success or None on failure/decline.
-    """
-    import importlib
-    import subprocess
-    import sys as _sys
-
-    mod_name = import_name or package_name
-    try:
-        return importlib.import_module(mod_name)
-    except Exception:
-        pass
-
-    if not prompt:
-        return None
-
-    try:
-        ans = input(f"Dependência '{package_name}' em falta. Instalar agora? [s/N]: ").strip().lower()
-    except Exception:
-        return None
-
-    if ans not in ("", "s", "sim", "y", "yes"):
-        return None
-
-    cmd = [_sys.executable, "-m", "pip", "install", package_name]
-    print(f"A executar: {' '.join(cmd)}")
-    try:
-        res = subprocess.run(cmd)
-    except Exception as e:
-        print(f"Falha ao executar o pip: {e}")
-        return None
-
-    if res.returncode != 0:
-        print(f"pip install terminou com o código {res.returncode}")
-        return None
-
-    try:
-        return importlib.import_module(mod_name)
-    except Exception as e:
-        print(f"Instalado, mas falhou ao importar {mod_name}: {e}")
-        return None
+from package_manager import ensure_package
 
 
 
 # Section: Dependencies
 
-# Prompt/install commonly-used packages used in this script
-_ensure_package_local("cryptography")
-_ensure_package_local("pyotp")
-_ensure_package_local("qrcode", import_name="qrcode")
+def ensure_runtime_deps():
+    """Ensure optional dependencies are available when running the script."""
+    ensure_package("cryptography")
+    ensure_package("pyotp")
+    ensure_package("qrcode")
 
 
 
@@ -115,6 +73,7 @@ def ensure_files_dir():
 
 def init_keys_and_totp():
     """Generate RSA keypair and setup TOTP 2FA with QR code."""
+    ensure_runtime_deps()
     # Ensure data directory exists
     os.makedirs(DATA_DIR, exist_ok=True)
     
@@ -453,6 +412,7 @@ def check_and_auto_init():
 
 
 def main():
+    ensure_runtime_deps()
     args = parse_args()
     if args.init:
         init_keys_and_totp()

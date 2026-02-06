@@ -161,6 +161,7 @@ This application is developed within the scope of the Dynamic Programming Langua
 \newpage
 \doublespacing
 \tableofcontents
+\newpage
 \listoffigures
 \doublespacing
 
@@ -175,6 +176,13 @@ permitindo ao utilizador interagir com o sistema de forma simples e eficiente.
 O sistema base a ser utilizado será o Kali Linux (\cite{kali}), devido à sua popularidade na área de
 segurança informática e à vasta gama de ferramentas disponíveis.
 Todo o progresso do projeto será documentado no repositório GitHub (\cite{github}).
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.7\textwidth]{Recursos/commits.png}
+	\caption{Commits no Repositório GitHub}
+	\label{fig:nfswarning}
+\end{figure}
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
@@ -243,19 +251,12 @@ O menu é o metodo principal para a interação com a ferramenta. Para aceder a 
 Para executar o menu apenas é necessário escrever `python menu.py`.\\
 
 O menu apresenta-se da seguinte forma:
-\begin{verbatim}
-    ========== MENU PRINCIPAL - LPD-TOOL ==========
-    1 - Port Scanner
-    2 - UDP Flooder
-    3 - SYN Flooder
-    4 - Log Analyzer
-    5 - Messenger
-    6 - Port Knocker
-    7 - Password Manager
-    0 - Sair
-    ===============================================
-    Escolha uma opção: 
-\end{verbatim}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Recursos/menu.png}
+	\caption{Exemplo de execução do Menu Principal}
+	\label{fig:menu}
+\end{figure}
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
@@ -263,11 +264,44 @@ O menu apresenta-se da seguinte forma:
 
 O Port Scanner permite identificar portas TCP abertas em um ou mais alvos. O utilizador indica uma lista de alvos separada por vírgulas e um intervalo de portas (inicial e final). O script resolve cada hostname para IP, testa a conectividade porta a porta com timeout configurável e apresenta os serviços conhecidos quando possível. No final, gera um relatório por alvo com as portas abertas e o tempo total do varrimento. Opcionalmente, pode guardar um relatório em JSON com resultados e métricas, o que facilita a análise posterior.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Recursos/scanner_test.png}
+	\caption{Exemplo de execução do Port Scanner}
+	\label{fig:scanner_test}
+\end{figure}
+
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{UDP Flooder}
 
 O UDP Flooder executa um teste de negação de serviço via UDP. O utilizador define o alvo, a porta, a duração, o tamanho do pacote e o número de threads. O script envia pacotes UDP aleatórios de forma concorrente e apresenta estatísticas como total de pacotes enviados e taxa média (pps). Inclui validações de parâmetros e um aviso de segurança com confirmação explícita, reforçando o uso exclusivamente em ambientes autorizados.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/udp_test1.png}
+		\caption{Configuração inicial}
+		\label{fig:udp_test1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/udp_test2.png}
+		\caption{Execução do ataque}
+		\label{fig:udp_test2}
+	\end{subfigure}
+	\vskip\baselineskip
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/udp_test3.png}
+		\caption{Relatório final}
+		\label{fig:udp_test3}
+	\end{subfigure}
+	\caption{Exemplo de execução do UDP Flooder}
+	\label{fig:udp_flooder}
+\end{figure}
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
@@ -275,17 +309,37 @@ O UDP Flooder executa um teste de negação de serviço via UDP. O utilizador de
 
 O SYN Flooder simula um ataque DoS baseado em TCP SYN, recorrendo à biblioteca Scapy para criação de pacotes raw. O utilizador indica alvo, porta, duração e threads. Cada thread gera pacotes SYN com IP e porto de origem aleatórios, enviando-os sem completar o handshake. O script mostra progresso e, no fim, apresenta um relatório com número de pacotes e taxa de envio. Requer privilégios de administrador e apresenta um aviso legal antes da execução.
 
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.6\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/syn_test1.png}
+		\caption{Confirmação e início}
+		\label{fig:syn_test1}
+	\end{subfigure}
+	\vskip\baselineskip
+	\begin{subfigure}[b]{0.6\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/syn_test2.png}
+		\caption{Estatísticas finais}
+		\label{fig:syn_test2}
+	\end{subfigure}
+	\caption{Exemplo de execução do SYN Flooder}
+	\label{fig:syn_flooder}
+\end{figure}
+
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{Log Analyzer}
 
 O Log Analyzer analisa ficheiros de logs de servidores web (Apache/Nginx), autenticação SSH e firewall UFW. Utiliza expressões regulares para extrair IP, data/hora, serviço, ação e detalhes relevantes. Quando disponível, integra uma base GeoLite2 para resolver o país de origem dos endereços IP. Para cada ficheiro de entrada, gera relatórios em JSON e CSV e apresenta um resumo com contagens por serviço e top de países. Esta ferramenta é útil para identificar padrões de acesso e eventos suspeitos.
 
-%---------------------------------------------------------------------------------------------------------------------------
-\newpage
-\subsection{Messenger}
-
-O Messenger implementa um mensageiro simples com servidor e cliente via TCP. O servidor gera um par de chaves RSA e guarda as mensagens no servidor, cifradas através de um esquema híbrido: o conteúdo é protegido com Fernet (simétrico) e a chave Fernet é cifrada com a chave pública RSA. O cliente comunica com o servidor através de comandos em JSON para enviar, listar, descarregar e apagar mensagens, garantindo que apenas participantes podem aceder ao conteúdo. Inclui ainda criação de backups cifrados (simétricos com palavra‑passe ou assimétricos com RSA), reforçando boas práticas de proteção de dados.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Recursos/log_test.png}
+	\caption{Exemplo de relatório do Log Analyzer}
+	\label{fig:log_test}
+\end{figure}
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
@@ -293,11 +347,44 @@ O Messenger implementa um mensageiro simples com servidor e cliente via TCP. O s
 
 O Port Knocker envia uma sequência de pacotes UDP para um conjunto de portas específicas, simulando a técnica de port knocking. O utilizador fornece o endereço do servidor e a lista de portas. O script envia um knock por porta com um pequeno atraso entre envios e confirma cada envio. Esta abordagem pode ser usada para abrir serviços ocultos (por exemplo, SSH) apenas após a sequência correta.
 
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.7\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/knocker_test1.png}
+		\caption{Configuração inicial}
+		\label{fig:knocker_test1}
+	\end{subfigure}
+	\vskip\baselineskip
+	\begin{subfigure}[b]{0.7\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/knocker_test2.png}
+		\caption{Confirmação de knocks}
+		\label{fig:knocker_test2}
+	\end{subfigure}
+	\vskip\baselineskip
+	\begin{subfigure}[b]{0.7\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Recursos/knocker_test3.png}
+		\caption{Confirmação de funcionamento}
+		\label{fig:knocker_test3}
+	\end{subfigure}
+	\caption{Exemplo de execução do Port Knocker}
+	\label{fig:port_knocker}
+\end{figure}
+
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage
 \subsection{Password Manager}
 
 O Password Manager é um gestor de palavras‑passe com cifragem híbrida (RSA + Fernet) e autenticação de dois fatores via TOTP. O utilizador inicializa o sistema, gerando chaves RSA e um segredo TOTP. Os registos (URL, utilizador e palavra‑passe) são cifrados e guardados numa base local. As operações de listar, ver, atualizar e apagar exigem um código OTP válido, mitigando acessos não autorizados. O script inclui modo não‑interativo e menu interativo, proporcionando flexibilidade de utilização.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Recursos/password_test.png}
+	\caption{Exemplo de execução do Password Manager}
+	\label{fig:password_test}
+\end{figure}
 
 %---------------------------------------------------------------------------------------------------------------------------
 \newpage

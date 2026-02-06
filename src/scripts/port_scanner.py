@@ -10,10 +10,14 @@ Description:
     Scans ports on multiple targets to identify which are open.
 
 Usage:
-    python3 port_scanner.py <target1,target2,...> <start_port> <end_port>
+    python3 port_scanner.py <targets> <start_port> <end_port> [--timeout SECONDS] [--output FILE]
 
 Example:
-    python3 port_scanner.py target1.com,target2.com,127.0.0.1 1 1024
+    python3 port_scanner.py 127.0.0.1 1 1024
+    python3 port_scanner.py target1.com,target2.com 1 65535 --output report.json
+
+Note:
+    Targets can be comma-separated (host1.com,host2.com,192.168.1.1)
 """
 
 import socket

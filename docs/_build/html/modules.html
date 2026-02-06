@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+<html lang="pt" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modules &#8212; Documentação Cyber-Toolbox 1.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=bbb231ee"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/translations.js?v=beaedd51"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Pesquisar" href="search.html" />
+    <link rel="prev" title="Cyber-Toolbox Comments" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="modules">
+<h1>Modules<a class="headerlink" href="#modules" title="Link to this heading">¶</a></h1>
+<section id="module-menu_launcher">
+<span id="menu-launcher"></span><h2>Menu Launcher<a class="headerlink" href="#module-menu_launcher" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - Menu Launcher</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Simple menu launcher to manage/run scripts in the ./scripts folder.</p>
+</dd>
+<dt>Usage:</dt><dd><p>python3 menu_launcher.py</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>python3 menu_launcher.py</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="menu_launcher.clear_screen">
+<span class="sig-prename descclassname"><span class="pre">menu_launcher.</span></span><span class="sig-name descname"><span class="pre">clear_screen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#menu_launcher.clear_screen" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="menu_launcher.ensure_dirs">
+<span class="sig-prename descclassname"><span class="pre">menu_launcher.</span></span><span class="sig-name descname"><span class="pre">ensure_dirs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#menu_launcher.ensure_dirs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="menu_launcher.main_menu">
+<span class="sig-prename descclassname"><span class="pre">menu_launcher.</span></span><span class="sig-name descname"><span class="pre">main_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#menu_launcher.main_menu" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="menu_launcher.prompt_args">
+<span class="sig-prename descclassname"><span class="pre">menu_launcher.</span></span><span class="sig-name descname"><span class="pre">prompt_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_defs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#menu_launcher.prompt_args" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="menu_launcher.run_script">
+<span class="sig-prename descclassname"><span class="pre">menu_launcher.</span></span><span class="sig-name descname"><span class="pre">run_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#menu_launcher.run_script" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="menu_launcher.show_menu">
+<span class="sig-prename descclassname"><span class="pre">menu_launcher.</span></span><span class="sig-name descname"><span class="pre">show_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#menu_launcher.show_menu" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-scripts_config">
+<span id="scripts-configuration"></span><h2>Scripts Configuration<a class="headerlink" href="#module-scripts_config" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - Scripts Configuration</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Defines the configuration of available scripts, including names, files,
+and required arguments.</p>
+</dd>
+</dl>
+</section>
+<section id="module-log_analyzer">
+<span id="log-analyzer"></span><h2>Log Analyzer<a class="headerlink" href="#module-log_analyzer" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - Log Analyzer</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Analyze Apache/Nginx access logs and OpenSSH auth logs.
+Extracts IP, timestamp, service, status, and details.
+Optionally resolves country via GeoLite2 database and generates JSON/CSV/PDF reports.</p>
+</dd>
+<dt>Usage:</dt><dd><p>python3 log_analyzer.py –files LOG_FILE … –outdir OUTPUT_DIR [–geoip-db MMDB_PATH]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>python3 log_analyzer.py –files access.log auth.log –outdir reports
+python3 log_analyzer.py –files access.log –outdir reports –geoip-db data/GeoLite2-City.mmdb</p>
+<dl class="simple">
+<dt>Formats:</dt><dd><ul class="simple">
+<li><p>Apache/Nginx combined log format</p></li>
+<li><p>OpenSSH auth.log syslog format</p></li>
+<li><p>UFW (Uncomplicated Firewall) log format</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="log_analyzer.GeoIPResolver">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">GeoIPResolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#log_analyzer.GeoIPResolver" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="log_analyzer.GeoIPResolver.country_for">
+<span class="sig-name descname"><span class="pre">country_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#log_analyzer.GeoIPResolver.country_for" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.analyze_files">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">analyze_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geoip_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#log_analyzer.analyze_files" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.create_pdf_report">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">create_pdf_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pdf_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#log_analyzer.create_pdf_report" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a PDF report from events using reportlab.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.find_default_geoip_db">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">find_default_geoip_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#log_analyzer.find_default_geoip_db" title="Link to this definition">¶</a></dt>
+<dd><p>Look for GeoLite2 DB files inside the repository <cite>src/data</cite> folder.</p>
+<p>Checks, in order:
+- src/data/GeoLite2-City.mmdb
+- src/data/GeoLite2-Country.mmdb
+Returns the first existing absolute path, or None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.init_optional_deps">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">init_optional_deps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#log_analyzer.init_optional_deps" title="Link to this definition">¶</a></dt>
+<dd><p>Load optional dependencies only when executing the script.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.main">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#log_analyzer.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.parse_apache_line">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">parse_apache_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#log_analyzer.parse_apache_line" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.parse_ssh_line">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">parse_ssh_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#log_analyzer.parse_ssh_line" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.parse_ufw_line">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">parse_ufw_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#log_analyzer.parse_ufw_line" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="log_analyzer.summarize_events">
+<span class="sig-prename descclassname"><span class="pre">log_analyzer.</span></span><span class="sig-name descname"><span class="pre">summarize_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#log_analyzer.summarize_events" title="Link to this definition">¶</a></dt>
+<dd><p>Print a small summary: counts per service and top countries.</p>
+</dd></dl>
+
+</section>
+<section id="module-package_manager">
+<span id="package-manager"></span><h2>Package Manager<a class="headerlink" href="#module-package_manager" title="Link to this heading">¶</a></h2>
+<p>Shared package dependency manager.</p>
+<p>Provides a centralized function for ensuring required packages are installed.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="package_manager.ensure_package">
+<span class="sig-prename descclassname"><span class="pre">package_manager.</span></span><span class="sig-name descname"><span class="pre">ensure_package</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#package_manager.ensure_package" title="Link to this definition">¶</a></dt>
+<dd><p>Ensure a package is installed, optionally prompting for installation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parâmetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>package_name</strong> – The package name for pip install</p></li>
+<li><p><strong>import_name</strong> – The module name for import (if different from package_name)</p></li>
+<li><p><strong>prompt</strong> – Whether to prompt user for installation if missing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Retorno<span class="colon">:</span></dt>
+<dd class="field-even"><p>The imported module on success, or None on failure/decline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-password_manager">
+<span id="password-manager"></span><h2>Password Manager<a class="headerlink" href="#module-password_manager" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - Password Manager</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Simple password manager with RSA + Fernet encryption and TOTP 2FA.
+Supports interactive mode and command-line operations.</p>
+</dd>
+<dt>Usage:</dt><dd><p>python3 password_manager.py [–init] [–create|–list|–view|–update|–delete] [OPTIONS]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>python3 password_manager.py –init
+python3 password_manager.py –create –url example.com –user alice –pass s3cr3t
+python3 password_manager.py –list –otp 123456
+python3 password_manager.py (interactive mode if no arguments)</p>
+<dl class="simple">
+<dt>Security:</dt><dd><ul class="simple">
+<li><p>RSA 2048-bit encryption for key storage</p></li>
+<li><p>Fernet (AES-128) encryption for records</p></li>
+<li><p>TOTP 2FA authentication for sensitive operations</p></li>
+<li><p>All files stored in src/data/ directory</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Educational implementation. Do not use for production secrets.</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.check_and_auto_init">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">check_and_auto_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.check_and_auto_init" title="Link to this definition">¶</a></dt>
+<dd><p>Check if initialization is needed and perform it automatically.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.cmd_create">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">cmd_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.cmd_create" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.cmd_delete">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">cmd_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.cmd_delete" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.cmd_list">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">cmd_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.cmd_list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.cmd_update">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">cmd_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.cmd_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.cmd_view">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">cmd_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.cmd_view" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.decrypt_record">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">decrypt_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">enc_cipher_b64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enc_key_b64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.decrypt_record" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.encrypt_record_plaintext">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">encrypt_record_plaintext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plaintext_bytes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.encrypt_record_plaintext" title="Link to this definition">¶</a></dt>
+<dd><p>Encrypt plaintext bytes using Fernet and encrypt the key with RSA public key.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.ensure_files_dir">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">ensure_files_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.ensure_files_dir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.ensure_runtime_deps">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">ensure_runtime_deps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.ensure_runtime_deps" title="Link to this definition">¶</a></dt>
+<dd><p>Ensure optional dependencies are available when running the script.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.init_keys_and_totp">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">init_keys_and_totp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.init_keys_and_totp" title="Link to this definition">¶</a></dt>
+<dd><p>Generate RSA keypair and setup TOTP 2FA with QR code.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.load_private_key">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">load_private_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.load_private_key" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.load_public_key">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">load_public_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.load_public_key" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.load_records">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">load_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.load_records" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.main">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.parse_args">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.parse_args" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.require_otp">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">require_otp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.require_otp" title="Link to this definition">¶</a></dt>
+<dd><p>Verify TOTP code for 2FA authentication.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parâmetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>code</strong> – The 6-digit TOTP code from the authenticator app</p>
+</dd>
+<dt class="field-even">Retorno<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if code is valid, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.run_interactive_menu">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">run_interactive_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.run_interactive_menu" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="password_manager.save_records">
+<span class="sig-prename descclassname"><span class="pre">password_manager.</span></span><span class="sig-name descname"><span class="pre">save_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#password_manager.save_records" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-port_scanner">
+<span id="port-scanner"></span><h2>Port Scanner<a class="headerlink" href="#module-port_scanner" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - Port Scanner</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Scans ports on multiple targets to identify which are open.</p>
+</dd>
+<dt>Usage:</dt><dd><p>python3 port_scanner.py &lt;targets&gt; &lt;start_port&gt; &lt;end_port&gt; [–timeout SECONDS] [–output FILE]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>python3 port_scanner.py 127.0.0.1 1 1024
+python3 port_scanner.py target1.com,target2.com 1 65535 –output report.json</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Targets can be comma-separated (host1.com,host2.com,192.168.1.1)</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="port_scanner.main">
+<span class="sig-prename descclassname"><span class="pre">port_scanner.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#port_scanner.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="port_scanner.scan_host">
+<span class="sig-prename descclassname"><span class="pre">port_scanner.</span></span><span class="sig-name descname"><span class="pre">scan_host</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#port_scanner.scan_host" title="Link to this definition">¶</a></dt>
+<dd><p>Scan ports on a specific host.</p>
+</dd></dl>
+
+</section>
+<section id="module-port_knocker">
+<span id="port-knocker"></span><h2>Port Knocker<a class="headerlink" href="#module-port_knocker" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - Port Knocker</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Sends a sequence of TCP packets to specific ports of a remote server.
+Used to enable SSH access or trigger port-knock based firewalls.</p>
+</dd>
+<dt>Usage:</dt><dd><p>python3 port_knocker.py &lt;host&gt; &lt;port1&gt; [port2] [port3] …</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>python3 port_knocker.py 192.168.1.100 7000 8000 9000
+python3 port_knocker.py target.com 1234</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Requires at least one port. Timeout between knocks is 0.2 seconds.</p>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="port_knocker.main">
+<span class="sig-prename descclassname"><span class="pre">port_knocker.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#port_knocker.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="port_knocker.send_knock">
+<span class="sig-prename descclassname"><span class="pre">port_knocker.</span></span><span class="sig-name descname"><span class="pre">send_knock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#port_knocker.send_knock" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-syn_flooder">
+<span id="syn-flooder"></span><h2>SYN Flooder<a class="headerlink" href="#module-syn_flooder" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - SYN Flooder</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Sends TCP SYN packets to simulate a denial-of-service attack (SYN Flood/DoS).
+Uses Scapy for low-level packet crafting.</p>
+</dd>
+<dt>Usage:</dt><dd><p>python3 syn_flooder.py &lt;target&gt; &lt;duration&gt; [–port PORT] [–threads N]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>python3 syn_flooder.py 192.168.1.1 10 –port 80 –threads 4</p>
+<dl class="simple">
+<dt>Monitor:</dt><dd><p>sudo tcpdump -i eth0 -nn “tcp[tcpflags] &amp; tcp-syn != 0”</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="syn_flooder.flood_target">
+<span class="sig-prename descclassname"><span class="pre">syn_flooder.</span></span><span class="sig-name descname"><span class="pre">flood_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syn_flooder.flood_target" title="Link to this definition">¶</a></dt>
+<dd><p>Send SYN flood with multiple threads.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syn_flooder.init_scapy">
+<span class="sig-prename descclassname"><span class="pre">syn_flooder.</span></span><span class="sig-name descname"><span class="pre">init_scapy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syn_flooder.init_scapy" title="Link to this definition">¶</a></dt>
+<dd><p>Load Scapy only when executing the script.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syn_flooder.main">
+<span class="sig-prename descclassname"><span class="pre">syn_flooder.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syn_flooder.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syn_flooder.syn_flood_worker">
+<span class="sig-prename descclassname"><span class="pre">syn_flooder.</span></span><span class="sig-name descname"><span class="pre">syn_flood_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">packets_sent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lock</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syn_flooder.syn_flood_worker" title="Link to this definition">¶</a></dt>
+<dd><p>Worker thread that sends TCP SYN packets to a target.</p>
+</dd></dl>
+
+</section>
+<section id="module-udp_flooder">
+<span id="udp-flooder"></span><h2>UDP Flooder<a class="headerlink" href="#module-udp_flooder" title="Link to this heading">¶</a></h2>
+<p>Master’s in Computer Security Engineering
+Dynamic Programming Languages - UDP Flooder</p>
+<p>Author: Martinho Caeiro (23917)</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>Sends UDP packets to a target (UDP Flood attack).</p>
+</dd>
+<dt>Usage:</dt><dd><p>python3 udp_flooder.py [–target HOST] [–port PORT] [–duration SECONDS] [–threads N]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>python3 udp_flooder.py –target 192.168.1.1 –port 53 –duration 10</p>
+<dl class="simple">
+<dt>Test:</dt><dd><p>sudo tcpdump -i eth0 udp</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="udp_flooder.flood_target">
+<span class="sig-prename descclassname"><span class="pre">udp_flooder.</span></span><span class="sig-name descname"><span class="pre">flood_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">packet_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udp_flooder.flood_target" title="Link to this definition">¶</a></dt>
+<dd><p>Send UDP flood with multiple threads.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udp_flooder.main">
+<span class="sig-prename descclassname"><span class="pre">udp_flooder.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#udp_flooder.main" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="udp_flooder.udp_flood_worker">
+<span class="sig-prename descclassname"><span class="pre">udp_flooder.</span></span><span class="sig-name descname"><span class="pre">udp_flood_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">packet_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">packets_sent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#udp_flooder.udp_flood_worker" title="Link to this definition">¶</a></dt>
+<dd><p>Worker thread that sends UDP packets to a target.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cyber-Toolbox</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Ir" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navegação</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-menu_launcher">Menu Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scripts_config">Scripts Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-log_analyzer">Log Analyzer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-package_manager">Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-password_manager">Password Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-port_scanner">Port Scanner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-port_knocker">Port Knocker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-syn_flooder">SYN Flooder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-udp_flooder">UDP Flooder</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="capítulo anterior">Cyber-Toolbox Comments</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

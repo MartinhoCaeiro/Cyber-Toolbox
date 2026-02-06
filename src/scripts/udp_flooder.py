@@ -9,14 +9,14 @@ Author: Martinho Caeiro (23917)
 Description:
     Sends UDP packets to a target (UDP Flood attack).
     
-Check your network interface with:
-    sudo tcpdump -i eth0 udp
-
 Usage:
     python3 udp_flooder.py [--target HOST] [--port PORT] [--duration SECONDS] [--threads N]
 
 Example:
     python3 udp_flooder.py --target 192.168.1.1 --port 53 --duration 10
+
+Test:
+    sudo tcpdump -i eth0 udp
 """
 
 import socket
@@ -25,7 +25,6 @@ import sys
 import argparse
 import time
 import threading
-from datetime import datetime
 
 
 

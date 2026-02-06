@@ -7,18 +7,20 @@ Author: Martinho Caeiro (23917)
 
 Description:
     Analyze Apache/Nginx access logs and OpenSSH auth logs.
-
-Features:
-    - Parse Apache/Nginx combined log lines and OpenSSH auth.log lines.
-    - Extract IP, timestamp, service, status (success/fail), and details.
-    - Optionally resolve country via GeoLite2 DB (pass --geoip-db).
-    - Emit JSON and CSV reports grouped per event.
+    Extracts IP, timestamp, service, status, and details.
+    Optionally resolves country via GeoLite2 database and generates JSON/CSV/PDF reports.
 
 Usage:
-    python log_analyzer.py --files access.log auth.log --outdir reports --geoip-db /path/GeoLite2-Country.mmdb
+    python3 log_analyzer.py --files LOG_FILE ... --outdir OUTPUT_DIR [--geoip-db MMDB_PATH]
 
 Example:
-    python log_analyzer.py --files access.log auth.log --outdir reports
+    python3 log_analyzer.py --files access.log auth.log --outdir reports
+    python3 log_analyzer.py --files access.log --outdir reports --geoip-db data/GeoLite2-City.mmdb
+
+Formats:
+    - Apache/Nginx combined log format
+    - OpenSSH auth.log syslog format
+    - UFW (Uncomplicated Firewall) log format
 """
 from __future__ import annotations
 
@@ -29,64 +31,62 @@ import sys
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
+from package_manager import ensure_package
 
 
 # Section: Dependencies
 
-def _ensure_package_local(package_name, import_name=None, prompt=True):
-    import importlib
-    import subprocess
-    import sys as _sys
-
-    mod_name = import_name or package_name
-    try:
-        return importlib.import_module(mod_name)
-    except Exception:
-        pass
-    if not prompt:
-        return None
-    try:
-        ans = input(f"Dependência '{package_name}' em falta. Instalar agora? [s/N]: ").strip().lower()
-    except Exception:
-        return None
-    if ans not in ("", "s", "sim", "y", "yes"):
-        return None
-    cmd = [_sys.executable, "-m", "pip", "install", package_name]
-    print(f"A executar: {' '.join(cmd)}")
-    try:
-        res = subprocess.run(cmd)
-    except Exception as e:
-        print(f"Falha ao executar o pip: {e}")
-        return None
-    if res.returncode != 0:
-        print(f"pip install terminou com o código {res.returncode}")
-        return None
-    try:
-        return importlib.import_module(mod_name)
-    except Exception as e:
-        print(f"Instalado, mas falhou ao importar {mod_name}: {e}")
-        return None
+geoip2 = None
+reportlab = None
+colors = None
+A4 = None
+landscape = None
+getSampleStyleSheet = None
+inch = None
+SimpleDocTemplate = None
+Table = None
+TableStyle = None
+Paragraph = None
+Spacer = None
 
 
-# Try to ensure geoip2 is available; if the user declines installation the
-# existing fallback (geoip2 set to None) remains.
-_ensure_package_local("geoip2")
-try:
-    import geoip2.database
-except Exception:
-    geoip2 = None
+def init_optional_deps():
+    """Load optional dependencies only when executing the script."""
+    global geoip2
+    global reportlab, colors, A4, landscape, getSampleStyleSheet, inch
+    global SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 
-# Try to ensure reportlab is available for PDF generation
-_ensure_package_local("reportlab")
-try:
-    from reportlab.lib import colors
-    from reportlab.lib.pagesizes import A4, landscape
-    from reportlab.lib.styles import getSampleStyleSheet
-    from reportlab.lib.units import inch
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-    reportlab = True
-except Exception:
-    reportlab = None
+    if geoip2 is None:
+        ensure_package("geoip2")
+        try:
+            import geoip2 as geoip2_module  # type: ignore
+            import geoip2.database  # type: ignore
+            geoip2 = geoip2_module
+        except Exception:
+            geoip2 = None
+
+    if reportlab is None:
+        ensure_package("reportlab")
+        try:
+            from reportlab.lib import colors as colors_lib
+            from reportlab.lib.pagesizes import A4 as A4_size, landscape as landscape_func
+            from reportlab.lib.styles import getSampleStyleSheet as get_style_sheet
+            from reportlab.lib.units import inch as inch_unit
+            from reportlab.platypus import SimpleDocTemplate as doc_template, Table as table_class, TableStyle as table_style, Paragraph as paragraph_class, Spacer as spacer_class
+            
+            colors = colors_lib
+            A4 = A4_size
+            landscape = landscape_func
+            getSampleStyleSheet = get_style_sheet
+            inch = inch_unit
+            SimpleDocTemplate = doc_template
+            Table = table_class
+            TableStyle = table_style
+            Paragraph = paragraph_class
+            Spacer = spacer_class
+            reportlab = True
+        except Exception:
+            reportlab = None
 
 
 
@@ -229,6 +229,18 @@ def create_pdf_report(events: List[Dict], pdf_path: str, title: str):
         print(f"Aviso: reportlab não está disponível, a saltar criação do PDF {pdf_path}", file=sys.stderr)
         return
 
+    # Type assertions for IDE/checker - reportlab is confirmed to be loaded above
+    assert SimpleDocTemplate is not None
+    assert landscape is not None
+    assert A4 is not None
+    assert getSampleStyleSheet is not None
+    assert Paragraph is not None
+    assert Spacer is not None
+    assert inch is not None
+    assert Table is not None
+    assert TableStyle is not None
+    assert colors is not None
+
     doc = SimpleDocTemplate(pdf_path, pagesize=landscape(A4))
     elements = []
     styles = getSampleStyleSheet()
@@ -369,6 +381,7 @@ def main(argv=None):
     p.add_argument("--geoip-db", help="Caminho para GeoLite2-Country.mmdb (opcional)")
     p.add_argument("--outdir", "-o", default="reports", help="Diretório de output")
     args = p.parse_args(argv)
+    init_optional_deps()
     files = args.files or []
     if not files:
         p.error("Indique pelo menos um ficheiro de log para analisar")
